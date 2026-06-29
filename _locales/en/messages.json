@@ -1,0 +1,76 @@
+{
+  "extensionName": {
+    "message": "Magic Links",
+    "description": "The name of the extension"
+  },
+  "extensionDescription": {
+    "message": "Extracts, cleans, and formats relevant links from the active page for your AI assistants.",
+    "description": "The description of the extension"
+  },
+  "actionTitle": {
+    "message": "Magic Links - Extract links",
+    "description": "Title of the action button"
+  },
+  "toggleContentMode": {
+    "message": "Content",
+    "description": "Label for the main content mode"
+  },
+  "toggleCompleteMode": {
+    "message": "Full",
+    "description": "Label for the full mode"
+  },
+  "searchPlaceholder": {
+    "message": "Search links...",
+    "description": "Placeholder for the search bar"
+  },
+  "checkboxGroupDomain": {
+    "message": "Group by domain",
+    "description": "Option to group by domain"
+  },
+  "selectFormatLabel": {
+    "message": "Format",
+    "description": "Label for the export format"
+  },
+  "btnCopy": {
+    "message": "Copy",
+    "description": "Text of the copy button"
+  },
+  "btnDownload": {
+    "message": "Download",
+    "description": "Text of the download button"
+  },
+  "linksFoundCount": {
+    "message": "$COUNT$ links found",
+    "description": "Counter for links found",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "contentLinksFoundCount": {
+    "message": "$COUNT$ content links found",
+    "description": "Counter for content links found",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "noLinksFound": {
+    "message": "No links found in this mode.",
+    "description": "Message when no links are found"
+  },
+  "fallbackSuggestion": {
+    "message": "Switch to 'Full' mode to see all links on the page.",
+    "description": "Fallback suggestion if content links list is empty"
+  },
+  "copySuccess": {
+    "message": "Copied!",
+    "description": "Notification of copy success"
+  },
+  "copyError": {
+    "message": "Copy failed.",
+    "description": "Notification of copy failure"
+  }
+}

@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <!-- Dégradé de fond premium Glassmorphism / Magic -->
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8A2387" />
+      <stop offset="50%" stop-color="#E94057" />
+      <stop offset="100%" stop-color="#F27121" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Silhouette trapézoïdale arrondie (charte Magic Threads) -->
+  <path d="M 24 16 L 104 16 C 114 16, 120 24, 116 36 L 98 104 C 95 112, 88 118, 80 118 L 48 118 C 40 118, 33 112, 30 104 L 12 36 C 8 24, 14 16, 24 16 Z" fill="url(#bg-grad)" filter="url(#shadow)"/>
+
+  <!-- Maillons de chaîne de lien blanc -->
+  <g fill="none" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" transform="translate(34, 34) scale(0.9)">
+    <!-- Maillon gauche/haut -->
+    <path d="M 18 36 L 12 36 C 5.37 36, 0 30.63, 0 24 L 0 12 C 0 5.37, 5.37 0, 12 0 L 24 0 C 30.63 0, 36 5.37, 36 12 L 36 18" transform="rotate(-45, 18, 18)"/>
+    <!-- Maillon droit/bas -->
+    <path d="M 18 36 L 12 36 C 5.37 36, 0 30.63, 0 24 L 0 12 C 0 5.37, 5.37 0, 12 0 L 24 0 C 30.63 0, 36 5.37, 36 12 L 36 18" transform="translate(34, 34) rotate(135, 18, 18)"/>
+    <!-- Ligne de jonction centrale -->
+    <line x1="22" y1="22" x2="42" y2="42" stroke="#FFFFFF" stroke-width="8"/>
+  </g>
+
+  <!-- Points de contrôle magiques (étincelles) -->
+  <circle cx="28" cy="30" r="3" fill="#FFFFFF"/>
+  <circle cx="100" cy="98" r="4" fill="#FFFFFF"/>
+  <circle cx="108" cy="38" r="2.5" fill="#FFFFFF"/>
+  <polygon points="84,28 86,33 91,33 87,36 89,41 84,38 79,41 81,36 77,33 82,33" fill="#FFFFFF"/>
+</svg>

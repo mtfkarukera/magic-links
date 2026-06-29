@@ -1,0 +1,76 @@
+{
+  "extensionName": {
+    "message": "Magic Links",
+    "description": "拡張機能の名前"
+  },
+  "extensionDescription": {
+    "message": "アクティブなページから関連するリンクを抽出し、クリーンアップしてAIアシスタント用にフォーマットします。",
+    "description": "拡張機能の説明"
+  },
+  "actionTitle": {
+    "message": "Magic Links - リンクの抽出",
+    "description": "アクションボタンのタイトル"
+  },
+  "toggleContentMode": {
+    "message": "コンテンツ",
+    "description": "メインコンテンツモードのラベル"
+  },
+  "toggleCompleteMode": {
+    "message": "すべて",
+    "description": "フルモードのラベル"
+  },
+  "searchPlaceholder": {
+    "message": "リンクを検索...",
+    "description": "検索バーのプレースホルダー"
+  },
+  "checkboxGroupDomain": {
+    "message": "ドメインでグループ化",
+    "description": "ドメインごとにグループ化するオプション"
+  },
+  "selectFormatLabel": {
+    "message": "形式",
+    "description": "出力形式のラベル"
+  },
+  "btnCopy": {
+    "message": "コピー",
+    "description": "コピーボタンのテキスト"
+  },
+  "btnDownload": {
+    "message": "ダウンロード",
+    "description": "ダウンロードボタンのテキスト"
+  },
+  "linksFoundCount": {
+    "message": "$COUNT$ 個のリンクが見つかりました",
+    "description": "検出されたリンク数カウンター",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "contentLinksFoundCount": {
+    "message": "$COUNT$ 個のコンテンツリンクが見つかりました",
+    "description": "検出されたコンテンツリンク数カウンター",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "noLinksFound": {
+    "message": "このモードではリンクが見つかりませんでした。",
+    "description": "リンクが見つからない時のメッセージ"
+  },
+  "fallbackSuggestion": {
+    "message": "「すべて」モードに切り替えて、ページ内のすべてのリンクを表示してください。",
+    "description": "コンテンツリンクが空の時の切り替え提案メッセージ"
+  },
+  "copySuccess": {
+    "message": "コピーしました！",
+    "description": "コピー成功時の通知"
+  },
+  "copyError": {
+    "message": "コピーに失敗しました。",
+    "description": "コピー失敗時の通知"
+  }
+}

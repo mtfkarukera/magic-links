@@ -1,0 +1,76 @@
+{
+  "extensionName": {
+    "message": "Magic Links",
+    "description": "Tên của tiện ích mở rộng"
+  },
+  "extensionDescription": {
+    "message": "Trích xuất, làm sạch và định dạng các liên kết liên quan từ trang hiện hoạt cho trợ lý AI của bạn.",
+    "description": "Mô tả của tiện ích mở rộng"
+  },
+  "actionTitle": {
+    "message": "Magic Links - Trích xuất liên kết",
+    "description": "Tiêu đề của nút hành động"
+  },
+  "toggleContentMode": {
+    "message": "Nội dung",
+    "description": "Nhãn cho chế độ nội dung chính"
+  },
+  "toggleCompleteMode": {
+    "message": "Đầy đủ",
+    "description": "Nhãn cho chế độ đầy đủ"
+  },
+  "searchPlaceholder": {
+    "message": "Tìm kiếm liên kết...",
+    "description": "Chỗ bảo lưu cho thanh tìm kiếm"
+  },
+  "checkboxGroupDomain": {
+    "message": "Gom nhóm theo tên miền",
+    "description": "Tùy chọn gom nhóm theo tên miền"
+  },
+  "selectFormatLabel": {
+    "message": "Định dạng",
+    "description": "Nhãn cho định dạng xuất"
+  },
+  "btnCopy": {
+    "message": "Sao chép",
+    "description": "Văn bản của nút sao chép"
+  },
+  "btnDownload": {
+    "message": "Tải về",
+    "description": "Văn bản của nút tải về"
+  },
+  "linksFoundCount": {
+    "message": "Tìm thấy $COUNT$ liên kết",
+    "description": "Bộ đếm cho liên kết được tìm thấy",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "contentLinksFoundCount": {
+    "message": "Tìm thấy $COUNT$ liên kết nội dung",
+    "description": "Bộ đếm cho liên kết nội dung được tìm thấy",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "noLinksFound": {
+    "message": "Không tìm thấy liên kết nào ở chế độ này.",
+    "description": "Thông báo khi không tìm thấy liên kết"
+  },
+  "fallbackSuggestion": {
+    "message": "Chuyển sang chế độ 'Đầy đủ' để xem tất cả liên kết trên trang.",
+    "description": "Gợi ý dự phòng nếu danh sách liên kết nội dung trống"
+  },
+  "copySuccess": {
+    "message": "Đã sao chép!",
+    "description": "Thông báo sao chép thành công"
+  },
+  "copyError": {
+    "message": "Sao chép thất bại.",
+    "description": "Thông báo sao chép thất bại"
+  }
+}

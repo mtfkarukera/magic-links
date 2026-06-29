@@ -1,0 +1,76 @@
+{
+  "extensionName": {
+    "message": "Magic Links",
+    "description": "Le nom de l'extension"
+  },
+  "extensionDescription": {
+    "message": "Extrait, nettoie et formate les liens pertinents de la page active pour vos assistants IA.",
+    "description": "La description de l'extension"
+  },
+  "actionTitle": {
+    "message": "Magic Links - Extraire les liens",
+    "description": "Titre du bouton de l'action"
+  },
+  "toggleContentMode": {
+    "message": "Contenu",
+    "description": "Libellé du mode contenu principal"
+  },
+  "toggleCompleteMode": {
+    "message": "Complet",
+    "description": "Libellé du mode complet"
+  },
+  "searchPlaceholder": {
+    "message": "Rechercher un lien...",
+    "description": "Placeholder de la barre de recherche"
+  },
+  "checkboxGroupDomain": {
+    "message": "Grouper par domaine",
+    "description": "Option de regroupement par domaine"
+  },
+  "selectFormatLabel": {
+    "message": "Format",
+    "description": "Libellé du format d'export"
+  },
+  "btnCopy": {
+    "message": "Copier",
+    "description": "Texte du bouton copier"
+  },
+  "btnDownload": {
+    "message": "Télécharger",
+    "description": "Texte du bouton télécharger"
+  },
+  "linksFoundCount": {
+    "message": "$COUNT$ liens trouvés",
+    "description": "Compteur de liens trouvés",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "contentLinksFoundCount": {
+    "message": "$COUNT$ liens de contenu trouvés",
+    "description": "Compteur de liens de contenu trouvés",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "noLinksFound": {
+    "message": "Aucun lien trouvé dans ce mode.",
+    "description": "Message quand aucun lien n'est trouvé"
+  },
+  "fallbackSuggestion": {
+    "message": "Bascule sur le mode 'Complet' pour voir tous les liens du document.",
+    "description": "Suggestion de fallback si la liste de contenu est vide"
+  },
+  "copySuccess": {
+    "message": "Copié !",
+    "description": "Notification de succès de la copie"
+  },
+  "copyError": {
+    "message": "Échec de la copie.",
+    "description": "Notification d'échec de la copie"
+  }
+}

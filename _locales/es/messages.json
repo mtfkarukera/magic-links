@@ -1,0 +1,76 @@
+{
+  "extensionName": {
+    "message": "Magic Links",
+    "description": "El nombre de la extensión"
+  },
+  "extensionDescription": {
+    "message": "Extrae, limpia y formatea enlaces relevantes de la página activa para tus asistentes de IA.",
+    "description": "La descripción de la extensión"
+  },
+  "actionTitle": {
+    "message": "Magic Links - Extraer enlaces",
+    "description": "Título del botón de acción"
+  },
+  "toggleContentMode": {
+    "message": "Contenido",
+    "description": "Etiqueta para el modo de contenido principal"
+  },
+  "toggleCompleteMode": {
+    "message": "Completo",
+    "description": "Etiqueta para el modo completo"
+  },
+  "searchPlaceholder": {
+    "message": "Buscar enlaces...",
+    "description": "Marcador de posición para la barra de búsqueda"
+  },
+  "checkboxGroupDomain": {
+    "message": "Agrupar por dominio",
+    "description": "Opción para agrupar por dominio"
+  },
+  "selectFormatLabel": {
+    "message": "Formato",
+    "description": "Etiqueta para el formato de exportación"
+  },
+  "btnCopy": {
+    "message": "Copiar",
+    "description": "Texto del botón copiar"
+  },
+  "btnDownload": {
+    "message": "Descargar",
+    "description": "Texto del botón descargar"
+  },
+  "linksFoundCount": {
+    "message": "Se encontraron $COUNT$ enlaces",
+    "description": "Contador de enlaces encontrados",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "contentLinksFoundCount": {
+    "message": "Se encontraron $COUNT$ enlaces de contenido",
+    "description": "Contador de enlaces de contenido encontrados",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "noLinksFound": {
+    "message": "No se encontraron enlaces en este modo.",
+    "description": "Mensaje cuando no se encuentran enlaces"
+  },
+  "fallbackSuggestion": {
+    "message": "Cambia al modo 'Completo' para ver todos los enlaces de la página.",
+    "description": "Sugerencia de fallback si la lista de enlaces de contenido está vacía"
+  },
+  "copySuccess": {
+    "message": "¡Copiado!",
+    "description": "Notificación de copia exitosa"
+  },
+  "copyError": {
+    "message": "Error al copiar.",
+    "description": "Notificación de error al copiar"
+  }
+}

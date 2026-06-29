@@ -1,0 +1,76 @@
+{
+  "extensionName": {
+    "message": "Magic Links",
+    "description": "Der Name der Erweiterung"
+  },
+  "extensionDescription": {
+    "message": "Extrahiert, bereinigt und formatiert relevante Links der aktiven Seite für deine KI-Assistenten.",
+    "description": "Die Beschreibung der Erweiterung"
+  },
+  "actionTitle": {
+    "message": "Magic Links - Links extrahieren",
+    "description": "Titel der Aktionsschaltfläche"
+  },
+  "toggleContentMode": {
+    "message": "Inhalt",
+    "description": "Label für den Hauptinhaltsmodus"
+  },
+  "toggleCompleteMode": {
+    "message": "Vollständig",
+    "description": "Label für den vollständigen Modus"
+  },
+  "searchPlaceholder": {
+    "message": "Links suchen...",
+    "description": "Platzhalter für die Suchleiste"
+  },
+  "checkboxGroupDomain": {
+    "message": "Nach Domain gruppieren",
+    "description": "Option zur Gruppierung nach Domain"
+  },
+  "selectFormatLabel": {
+    "message": "Format",
+    "description": "Label für das Exportformat"
+  },
+  "btnCopy": {
+    "message": "Kopieren",
+    "description": "Text des Kopieren-Buttons"
+  },
+  "btnDownload": {
+    "message": "Herunterladen",
+    "description": "Text des Herunterladen-Buttons"
+  },
+  "linksFoundCount": {
+    "message": "$COUNT$ Links gefunden",
+    "description": "Zähler für gefundene Links",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "contentLinksFoundCount": {
+    "message": "$COUNT$ Inhaltslinks gefunden",
+    "description": "Zähler für gefundene Inhaltslinks",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "noLinksFound": {
+    "message": "Keine Links in diesem Modus gefunden.",
+    "description": "Meldung, wenn keine Links gefunden wurden"
+  },
+  "fallbackSuggestion": {
+    "message": "Wechsle in den Modus 'Vollständig', um alle Links des Dokuments anzuzeigen.",
+    "description": "Fallback-Vorschlag, wenn die Inhaltslink-Liste leer ist"
+  },
+  "copySuccess": {
+    "message": "Kopiert!",
+    "description": "Benachrichtigung über erfolgreiches Kopieren"
+  },
+  "copyError": {
+    "message": "Kopieren fehlgeschlagen.",
+    "description": "Benachrichtigung über fehlgeschlagenes Kopieren"
+  }
+}

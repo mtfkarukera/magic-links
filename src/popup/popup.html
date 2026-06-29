@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Magic Links</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- En-tête de l'application -->
+    <header class="app-header">
+      <div class="logo-area">
+        <svg class="logo-svg" viewBox="0 0 128 128" width="24" height="24">
+          <path d="M 24 16 L 104 16 C 114 16, 120 24, 116 36 L 98 104 C 95 112, 88 118, 80 118 L 48 118 C 40 118, 33 112, 30 104 L 12 36 C 8 24, 14 16, 24 16 Z" fill="currentColor"/>
+        </svg>
+        <h1>Magic Links</h1>
+      </div>
+      <span class="version-tag">v1.0.0</span>
+    </header>
+
+    <!-- Zone principale -->
+    <main class="app-main">
+      <!-- Section de contrôle du mode -->
+      <section class="controls-mode">
+        <div class="toggle-container">
+          <input type="radio" id="mode-content" name="capture-mode" value="content" checked>
+          <label for="mode-content" data-i18n="toggleContentMode">Contenu</label>
+          
+          <input type="radio" id="mode-full" name="capture-mode" value="full">
+          <label for="mode-full" data-i18n="toggleCompleteMode">Complet</label>
+          
+          <div class="toggle-slider"></div>
+        </div>
+      </section>
+
+      <!-- Barre de recherche rapide -->
+      <section class="controls-search">
+        <div class="search-wrapper">
+          <input type="text" id="search-input" data-i18n="searchPlaceholder" data-i18n-attr="placeholder" placeholder="Rechercher un lien..." autocomplete="off">
+          <button id="clear-search" class="clear-btn" hidden>&times;</button>
+        </div>
+      </section>
+
+      <!-- Regroupement par domaine -->
+      <section class="controls-options">
+        <label class="checkbox-container">
+          <input type="checkbox" id="group-domain-checkbox">
+          <span class="checkmark"></span>
+          <span data-i18n="checkboxGroupDomain">Grouper par domaine</span>
+        </label>
+      </section>
+
+      <!-- Compteur dynamique -->
+      <section class="results-meta">
+        <span id="results-counter" class="counter-text">...</span>
+      </section>
+
+      <!-- Liste de prévisualisation des résultats -->
+      <section class="results-preview-container">
+        <div id="results-list" class="results-list">
+          <!-- Chargement initial -->
+          <div class="loader-container">
+            <div class="loader"></div>
+          </div>
+        </div>
+        <!-- Fallback en cas de liste vide -->
+        <div id="results-fallback" class="fallback-container" hidden>
+          <p class="fallback-title" data-i18n="noLinksFound">Aucun lien trouvé.</p>
+          <p class="fallback-desc" data-i18n="fallbackSuggestion">Bascule sur le mode Complet.</p>
+        </div>
+      </section>
+
+      <!-- Actions d'exportation -->
+      <section class="export-actions">
+        <div class="format-selector-area">
+          <label for="export-format" data-i18n="selectFormatLabel">Format :</label>
+          <div class="select-wrapper">
+            <select id="export-format">
+              <option value="markdown">Markdown (.md)</option>
+              <option value="text">Texte brut (.txt)</option>
+              <option value="csv">CSV (.csv)</option>
+              <option value="json">JSON (.json)</option>
+            </select>
+          </div>
+        </div>
+        <div class="buttons-area">
+          <button id="btn-copy" class="action-btn btn-primary">
+            <svg class="btn-icon" viewBox="0 0 24 24" width="16" height="16">
+              <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" fill="currentColor"/>
+            </svg>
+            <span data-i18n="btnCopy">Copier</span>
+          </button>
+          <button id="btn-download" class="action-btn btn-secondary">
+            <svg class="btn-icon" viewBox="0 0 24 24" width="16" height="16">
+              <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z" fill="currentColor"/>
+            </svg>
+            <span data-i18n="btnDownload">Télécharger</span>
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <!-- Notification toast éphémère -->
+    <div id="toast" class="toast" hidden></div>
+  </div>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>
