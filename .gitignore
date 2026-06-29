@@ -1,0 +1,20 @@
+# Système
+.DS_Store
+Thumbs.db
+*.log
+
+# Dossiers d'extension et de développement
+node_modules/
+.web-ext-artifacts/
+dist/
+
+# Fichiers privés et logs IA (Anti-Leak)
+AGENTS.md
+PLAN_ACTION.md
+RAPPORT_AUDIT.md
+task.md
+implementation_plan.md
+walkthrough.md
+*.tmp
+.env
+.env.*
