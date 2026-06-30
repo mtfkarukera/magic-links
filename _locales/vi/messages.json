@@ -72,5 +72,9 @@
   "copyError": {
     "message": "Sao chép thất bại.",
     "description": "Thông báo sao chép thất bại"
+  },
+  "pageNotSupported": {
+    "message": "Trang này không được hỗ trợ.",
+    "description": "Thông báo lỗi khi trang (PDF, chế độ đọc, v.v.) không được hỗ trợ"
   }
 }

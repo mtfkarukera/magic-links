@@ -72,5 +72,9 @@
   "copyError": {
     "message": "コピーに失敗しました。",
     "description": "コピー失敗時の通知"
+  },
+  "pageNotSupported": {
+    "message": "このページはサポートされていません。",
+    "description": "ページ（PDF、リーダーモードなど）がサポートされていない時のエラーメッセージ"
   }
 }

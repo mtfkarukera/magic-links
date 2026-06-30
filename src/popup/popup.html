@@ -11,8 +11,8 @@
     <!-- En-tête de l'application -->
     <header class="app-header">
       <div class="logo-area">
-        <svg class="logo-svg" viewBox="0 0 128 128" width="24" height="24">
-          <path d="M 24 16 L 104 16 C 114 16, 120 24, 116 36 L 98 104 C 95 112, 88 118, 80 118 L 48 118 C 40 118, 33 112, 30 104 L 12 36 C 8 24, 14 16, 24 16 Z" fill="currentColor"/>
+        <svg class="logo-svg" viewBox="0 0 128 128" width="24" height="24" aria-hidden="true" focusable="false">
+          <path d="M 24 118 L 104 118 C 114 118, 120 110, 116 98 L 98 30 C 95 22, 88 16, 80 16 L 48 16 C 40 16, 33 22, 30 30 L 12 98 C 8 110, 14 118, 24 118 Z" fill="currentColor"/>
         </svg>
         <h1>Magic Links</h1>
       </div>
@@ -23,15 +23,18 @@
     <main class="app-main">
       <!-- Section de contrôle du mode -->
       <section class="controls-mode">
-        <div class="toggle-container">
-          <input type="radio" id="mode-content" name="capture-mode" value="content" checked>
-          <label for="mode-content" data-i18n="toggleContentMode">Contenu</label>
-          
-          <input type="radio" id="mode-full" name="capture-mode" value="full">
-          <label for="mode-full" data-i18n="toggleCompleteMode">Complet</label>
-          
-          <div class="toggle-slider"></div>
-        </div>
+        <fieldset style="border: none; margin: 0; padding: 0;">
+          <legend class="visually-hidden">Mode de capture des liens</legend>
+          <div class="toggle-container">
+            <input type="radio" id="mode-content" name="capture-mode" value="content" checked>
+            <label for="mode-content" data-i18n="toggleContentMode">Contenu</label>
+            
+            <input type="radio" id="mode-full" name="capture-mode" value="full">
+            <label for="mode-full" data-i18n="toggleCompleteMode">Complet</label>
+            
+            <div class="toggle-slider" aria-hidden="true"></div>
+          </div>
+        </fieldset>
       </section>
 
       <!-- Barre de recherche rapide -->
@@ -53,7 +56,7 @@
 
       <!-- Compteur dynamique -->
       <section class="results-meta">
-        <span id="results-counter" class="counter-text">...</span>
+        <span id="results-counter" class="counter-text" aria-live="polite" aria-atomic="true">...</span>
       </section>
 
       <!-- Liste de prévisualisation des résultats -->
@@ -77,6 +80,7 @@
           <label for="export-format" data-i18n="selectFormatLabel">Format :</label>
           <div class="select-wrapper">
             <select id="export-format">
+              <option value="notebooklm" selected>🧠 NotebookLM (URLs)</option>
               <option value="markdown">Markdown (.md)</option>
               <option value="text">Texte brut (.txt)</option>
               <option value="csv">CSV (.csv)</option>
@@ -86,13 +90,13 @@
         </div>
         <div class="buttons-area">
           <button id="btn-copy" class="action-btn btn-primary">
-            <svg class="btn-icon" viewBox="0 0 24 24" width="16" height="16">
+            <svg class="btn-icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false">
               <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" fill="currentColor"/>
             </svg>
             <span data-i18n="btnCopy">Copier</span>
           </button>
           <button id="btn-download" class="action-btn btn-secondary">
-            <svg class="btn-icon" viewBox="0 0 24 24" width="16" height="16">
+            <svg class="btn-icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false">
               <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z" fill="currentColor"/>
             </svg>
             <span data-i18n="btnDownload">Télécharger</span>
@@ -102,7 +106,7 @@
     </main>
 
     <!-- Notification toast éphémère -->
-    <div id="toast" class="toast" hidden></div>
+    <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true" hidden></div>
   </div>
 
   <script type="module" src="popup.js"></script>

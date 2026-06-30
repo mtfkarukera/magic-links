@@ -72,5 +72,9 @@
   "copyError": {
     "message": "Échec de la copie.",
     "description": "Notification d'échec de la copie"
+  },
+  "pageNotSupported": {
+    "message": "Cette page n'est pas supportée.",
+    "description": "Message d'erreur lorsque la page (PDF, Mode Lecture, etc.) n'est pas supportée"
   }
 }

@@ -1,9 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
   <defs>
-    <!-- Dégradé de fond premium Glassmorphism / Magic -->
+    <!-- Dégradé de fond premium Glassmorphism / Magic (Rouge vers Orange/Pourpre) -->
     <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#8A2387" />
-      <stop offset="50%" stop-color="#E94057" />
+      <stop offset="60%" stop-color="#E94057" />
       <stop offset="100%" stop-color="#F27121" />
     </linearGradient>
     <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
@@ -11,11 +11,15 @@
     </filter>
   </defs>
 
-  <!-- Silhouette trapézoïdale arrondie (charte Magic Threads) -->
-  <path d="M 24 16 L 104 16 C 114 16, 120 24, 116 36 L 98 104 C 95 112, 88 118, 80 118 L 48 118 C 40 118, 33 112, 30 104 L 12 36 C 8 24, 14 16, 24 16 Z" fill="url(#bg-grad)" filter="url(#shadow)"/>
+  <!-- Silhouette trapézoïdale arrondie orientée base en bas (charte Magic) avec bordure foncée -->
+  <path d="M 24 118 L 104 118 C 114 118, 120 110, 116 98 L 98 30 C 95 22, 88 16, 80 16 L 48 16 C 40 16, 33 22, 30 30 L 12 98 C 8 110, 14 118, 24 118 Z" 
+        fill="url(#bg-grad)" 
+        stroke="#610c30" 
+        stroke-width="4" 
+        filter="url(#shadow)"/>
 
-  <!-- Maillons de chaîne de lien blanc -->
-  <g fill="none" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" transform="translate(34, 34) scale(0.9)">
+  <!-- Maillons de chaîne de lien blanc (décalés en bas à gauche) -->
+  <g fill="none" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" transform="translate(24, 45) scale(0.72)">
     <!-- Maillon gauche/haut -->
     <path d="M 18 36 L 12 36 C 5.37 36, 0 30.63, 0 24 L 0 12 C 0 5.37, 5.37 0, 12 0 L 24 0 C 30.63 0, 36 5.37, 36 12 L 36 18" transform="rotate(-45, 18, 18)"/>
     <!-- Maillon droit/bas -->
@@ -24,9 +28,26 @@
     <line x1="22" y1="22" x2="42" y2="42" stroke="#FFFFFF" stroke-width="8"/>
   </g>
 
-  <!-- Points de contrôle magiques (étincelles) -->
-  <circle cx="28" cy="30" r="3" fill="#FFFFFF"/>
-  <circle cx="100" cy="98" r="4" fill="#FFFFFF"/>
-  <circle cx="108" cy="38" r="2.5" fill="#FFFFFF"/>
-  <polygon points="84,28 86,33 91,33 87,36 89,41 84,38 79,41 81,36 77,33 82,33" fill="#FFFFFF"/>
+  <!-- Baguette magique diagonale pointant vers la chaîne -->
+  <line x1="94" y1="36" x2="68" y2="62" stroke="#FFFFFF" stroke-width="5.5" stroke-linecap="round"/>
+
+  <!-- Étoile principale à 5 branches (bout de la baguette magique) -->
+  <g transform="translate(63, 67) scale(1.15)">
+    <polygon points="0,-8 2.35,-2.35 8,-2.35 3.4,1 5.3,6.35 0,3 -5.3,6.35 -3.4,1 -8,-2.35 -2.35,-2.35" fill="#FFFFFF"/>
+  </g>
+
+  <!-- Étoiles secondaires scintillantes caractéristiques de la marque (4 branches) -->
+  <!-- Haut gauche -->
+  <path d="M 45,35 L 47,38 L 50,39 L 47,40 L 45,43 L 43,40 L 40,39 L 43,38 Z" fill="#FFFFFF"/>
+  <!-- Haut droit -->
+  <path d="M 80,21 L 82,24 L 85,25 L 82,26 L 80,29 L 78,26 L 75,25 L 78,24 Z" fill="#FFFFFF"/>
+  <!-- Milieu droit -->
+  <path d="M 100,56 L 102,59 L 105,60 L 102,61 L 100,64 L 98,61 L 95,60 L 98,59 Z" fill="#FFFFFF"/>
+  <!-- Bas gauche -->
+  <path d="M 28,68 L 30,71 L 33,72 L 30,73 L 28,76 L 26,73 L 23,72 L 26,71 Z" fill="#FFFFFF"/>
+
+  <!-- Trois points de contrôle caractéristiques de la marque (Rouge, Jaune, Vert) en bas à droite -->
+  <circle cx="86" cy="104" r="4" fill="#ff4d4a"/>
+  <circle cx="96" cy="104" r="4" fill="#ffbc00"/>
+  <circle cx="106" cy="104" r="4" fill="#2ecc71"/>
 </svg>

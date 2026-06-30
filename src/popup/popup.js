@@ -1,12 +1,14 @@
 // popup.js : Logique et interaction utilisateur — MTF Karukera
 
-import { t, applyI18n, getDomain, escapeCSV, escapeMarkdownText } from '../shared/utils.js';
+import { t, applyI18n, escapeCSV, escapeMarkdownText } from '../shared/utils.js';
 
 // Variables globales de l'application
 let allLinks = [];
 let filteredLinks = [];
 let readabilityActive = false;
 let activeTab = null;
+let toastTimer = null;
+let searchDebounceTimer = null;
 
 // Éléments du DOM
 const modeContentRadio = document.getElementById('mode-content');
@@ -56,18 +58,24 @@ async function scanActiveTab() {
       return;
     }
 
-    // Protection contre les pages système (about:*, chrome:*, etc.)
+    // Protection contre les pages système, fichiers PDF et le Mode Lecture (MTF Karukera)
     const isWebPage = activeTab.url.startsWith('http://') || activeTab.url.startsWith('https://');
-    if (!isWebPage) {
-      showEmptyState('noLinksFound', 'fallbackSuggestion');
+    const isPDF = activeTab.url.toLowerCase().endsWith('.pdf') || activeTab.url.includes('viewer.html');
+    const isReaderMode = activeTab.url.startsWith('about:reader');
+    if (!isWebPage || isPDF || isReaderMode) {
+      showEmptyState('pageNotSupported', '');
       return;
     }
 
     // 1. Injection séquentielle de Readability.js
-    await browser.scripting.executeScript({
+    const readabilityResult = await browser.scripting.executeScript({
       target: { tabId: activeTab.id },
       files: ['/lib/Readability.js']
     });
+
+    if (!readabilityResult || !readabilityResult[0]) {
+      console.warn('[ML] Readability.js non injecté correctement.');
+    }
 
     // 2. Injection du scanner de liens
     const scanResults = await browser.scripting.executeScript({
@@ -80,9 +88,9 @@ async function scanActiveTab() {
       allLinks = data.links || [];
       readabilityActive = data.readabilityActive || false;
       
-      // Si Readability n'est pas actif (ex: pas d'article détecté)
-      // et que nous sommes en mode "contenu", on peut suggérer de basculer
-      if (!readabilityActive && allLinks.filter(l => l.isContent).length === 0) {
+      // S'il n'y a aucun lien détecté dans le contenu de l'article,
+      // on bascule automatiquement vers le mode complet pour ne pas afficher une liste vide.
+      if (allLinks.filter(l => l.isContent).length === 0) {
         modeFullRadio.checked = true;
       }
       
@@ -91,7 +99,7 @@ async function scanActiveTab() {
       showEmptyState('noLinksFound', 'fallbackSuggestion');
     }
   } catch (err) {
-    console.error('[ML] Erreur lors de l\'analyse de la page :', err);
+    console.error('[ML] Erreur lors de l\'analyse de la page :', err.message);
     showEmptyState('noLinksFound', 'fallbackSuggestion');
   }
 }
@@ -130,6 +138,9 @@ function handleModeOrFilterChange() {
       mode === 'content' ? 'fallbackSuggestion' : ''
     );
   } else {
+    // Activer les boutons d'export (MTF Karukera)
+    btnCopy.disabled = false;
+    btnDownload.disabled = false;
     hideEmptyState();
     renderLinksPreview();
   }
@@ -141,7 +152,10 @@ function handleModeOrFilterChange() {
 function handleSearchInput() {
   const hasText = searchInput.value.length > 0;
   clearSearchBtn.hidden = !hasText;
-  handleModeOrFilterChange();
+  
+  // Debounce de 150ms pour le confort et la performance (MTF Karukera)
+  clearTimeout(searchDebounceTimer);
+  searchDebounceTimer = setTimeout(handleModeOrFilterChange, 150);
 }
 
 /**
@@ -163,11 +177,17 @@ function showLoader() {
   container.className = 'loader-container';
   const loader = document.createElement('div');
   loader.className = 'loader';
+  loader.setAttribute('role', 'status');
+  loader.setAttribute('aria-label', 'Chargement des liens en cours…');
   container.appendChild(loader);
   resultsList.appendChild(container);
   resultsList.hidden = false;
   resultsFallback.hidden = true;
   resultsCounter.textContent = '...';
+  
+  // Désactiver les boutons export (MTF Karukera)
+  btnCopy.disabled = true;
+  btnDownload.disabled = true;
 }
 
 /**
@@ -182,6 +202,10 @@ function showEmptyState(titleKey, descKey) {
   
   titleEl.textContent = t(titleKey);
   descEl.textContent = descKey ? t(descKey) : '';
+  
+  // Désactiver les boutons export (MTF Karukera)
+  btnCopy.disabled = true;
+  btnDownload.disabled = true;
 }
 
 /**
@@ -196,10 +220,11 @@ function hideEmptyState() {
  * Met à jour le libellé du compteur dynamique de liens
  */
 function updateCounter(count, mode) {
+  const renderedText = count > 200 ? ' (affichage des 200 premiers)' : '';
   if (mode === 'content') {
-    resultsCounter.textContent = t('contentLinksFoundCount', String(count));
+    resultsCounter.textContent = t('contentLinksFoundCount', String(count)) + renderedText;
   } else {
-    resultsCounter.textContent = t('linksFoundCount', String(count));
+    resultsCounter.textContent = t('linksFoundCount', String(count)) + renderedText;
   }
 }
 
@@ -210,10 +235,14 @@ function renderLinksPreview() {
   resultsList.textContent = '';
   const groupDomain = groupDomainCheckbox.checked;
 
+  // Limite d'affichage à 200 éléments max (MTF Karukera)
+  const MAX_RENDERED = 200;
+  const linksToRender = filteredLinks.slice(0, MAX_RENDERED);
+
   if (groupDomain) {
     // Groupement par domaine
     const groups = {};
-    filteredLinks.forEach(link => {
+    linksToRender.forEach(link => {
       if (!groups[link.domain]) {
         groups[link.domain] = [];
       }
@@ -225,7 +254,7 @@ function renderLinksPreview() {
       const groupDiv = document.createElement('div');
       groupDiv.className = 'domain-group';
 
-      const groupHeader = document.createElement('div');
+      const groupHeader = document.createElement('h3'); // H3 pour accessibilité (MTF Karukera)
       groupHeader.className = 'domain-group-header';
       groupHeader.textContent = `${domain} (${groups[domain].length})`;
       groupDiv.appendChild(groupHeader);
@@ -238,7 +267,7 @@ function renderLinksPreview() {
     });
   } else {
     // Rendu plat direct
-    filteredLinks.forEach(link => {
+    linksToRender.forEach(link => {
       resultsList.appendChild(createLinkItemElement(link));
     });
   }
@@ -250,14 +279,28 @@ function renderLinksPreview() {
 function createLinkItemElement(link) {
   const item = document.createElement('div');
   item.className = 'link-item';
+  item.setAttribute('role', 'link');
+  item.setAttribute('tabindex', '0');
+  item.setAttribute('aria-label', `${link.title} — ${link.url}`);
+
   // On indique si c'est un lien hautement pertinent
   if (link.score >= 50) {
     item.setAttribute('data-high-score', 'true');
   }
 
-  // Ouvrir le lien dans un nouvel onglet au clic
-  item.addEventListener('click', () => {
-    browser.tabs.create({ url: link.url });
+  const openLink = () => {
+    if (link.url.startsWith('http://') || link.url.startsWith('https://')) {
+      browser.tabs.create({ url: link.url });
+    }
+  };
+
+  // Ouvrir le lien au clic ou touches clavier Enter/Space (MTF Karukera)
+  item.addEventListener('click', openLink);
+  item.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      openLink();
+    }
   });
 
   const header = document.createElement('div');
@@ -290,6 +333,10 @@ function generateExportData(format) {
   const groupDomain = groupDomainCheckbox.checked;
 
   switch (format) {
+    case 'notebooklm':
+      // Format optimisé pour NotebookLM : une URL par ligne, prête à coller (MTF Karukera)
+      return filteredLinks.map(link => link.url).join('\n');
+
     case 'markdown':
       if (groupDomain) {
         // Groupé par domaine avec des titres
@@ -301,14 +348,20 @@ function generateExportData(format) {
 
         return Object.keys(groups).sort().map(domain => {
           const linksText = groups[domain]
-            .map(link => `- [${escapeMarkdownText(link.title)}](${link.url})`)
+            .map(link => {
+              const safeUrl = link.url.replace(/\(/g, '%28').replace(/\)/g, '%29');
+              return `- [${escapeMarkdownText(link.title)}](${safeUrl})`;
+            })
             .join('\n');
           return `### ${domain}\n\n${linksText}`;
         }).join('\n\n');
       } else {
         // Liste plate
         return filteredLinks
-          .map(link => `- [${escapeMarkdownText(link.title)}](${link.url})`)
+          .map(link => {
+            const safeUrl = link.url.replace(/\(/g, '%28').replace(/\)/g, '%29');
+            return `- [${escapeMarkdownText(link.title)}](${safeUrl})`;
+          })
           .join('\n');
       }
 
@@ -379,6 +432,11 @@ function handleDownload() {
   let extension = 'txt';
 
   switch (format) {
+    case 'notebooklm':
+      // Téléchargement NotebookLM en texte brut, une URL par ligne (MTF Karukera)
+      mimeType = 'text/plain';
+      extension = 'txt';
+      break;
     case 'markdown':
       mimeType = 'text/markdown';
       extension = 'md';
@@ -410,16 +468,21 @@ function handleDownload() {
   document.body.appendChild(downloadLink);
   downloadLink.click();
   
-  // Nettoyage du DOM et du Blob
+  // Nettoyage du DOM et du Blob (avec délai pour compatibilité - MTF Karukera)
   document.body.removeChild(downloadLink);
-  URL.revokeObjectURL(blobUrl);
+  setTimeout(() => {
+    URL.revokeObjectURL(blobUrl);
+  }, 1000);
 }
 
 /**
  * Affiche une notification toast éphémère
  */
 function showToast(message) {
-  // On annule et réinitialise le toast existant pour pouvoir le rejouer
+  // Annuler le timer existant pour éviter les conflits (MTF Karukera)
+  if (toastTimer) {
+    clearTimeout(toastTimer);
+  }
   toastEl.textContent = message;
   toastEl.hidden = false;
 
@@ -431,7 +494,7 @@ function showToast(message) {
   toastEl = newToast;
 
   // Masquer après 2 secondes (durée de l'animation)
-  setTimeout(() => {
+  toastTimer = setTimeout(() => {
     toastEl.hidden = true;
   }, 2000);
 }

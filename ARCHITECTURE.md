@@ -31,6 +31,7 @@ graph TD
 ### 2.2 Contexte Page Active (DOM)
 - **`lib/Readability.js`** : Librairie de parsing de Mozilla qui extrait le conteneur principal (l'article) du DOM. C'est elle qui permet d'identifier si un lien se trouve dans le "Contenu principal".
 - **`src/content/scanner.js`** : Script injecté dynamiquement. Il s'exécute dans le bac à sable de la page active. Il extrait tous les éléments `<a>`, applique les règles de nettoyage de base, calcule le score de pertinence, et évalue si les liens appartiennent au corps extrait par `Readability`.
+- **Sécurité et Isolation (World)** : Les scripts injectés via `browser.scripting.executeScript` s'exécutent par défaut dans le monde isolé (`ISOLATED` world) de Firefox. Ils partagent le DOM avec la page hôte mais possèdent un espace global JavaScript distinct. Cela garantit que les scripts tiers de la page ne peuvent pas lire, modifier ou détourner l'exécution de `scanner.js`, assurant la robustesse face aux injections de code.
 
 ### 2.3 Partagé et Utilitaires
 - **`src/shared/utils.js`** : Regroupe les méthodes d'extraction de domaine, les échappements de caractères spécifiques pour le CSV et le Markdown, ainsi que le système d'i18n.

@@ -74,16 +74,8 @@ export function escapeCSV(val) {
  */
 export function escapeMarkdownText(text) {
   if (!text) return '';
-  return text.replace(/[\[\]]/g, '\\$&');
+  // Échappe les caractères Markdown actifs : [, ], (, ), `, *, _, <, >, \
+  return text.replace(/[\[\]\`\*\_<>\(\)\\]/g, '\\$&');
 }
 
-// Export global pour être éventuellement accessible dans d'autres contextes
-if (typeof window !== 'undefined') {
-  window.MagicUtils = {
-    t,
-    applyI18n,
-    getDomain,
-    escapeCSV,
-    escapeMarkdownText
-  };
-}
+// Fin des utilitaires partagés — MTF Karukera

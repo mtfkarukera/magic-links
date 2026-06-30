@@ -12,6 +12,9 @@ dist/
 AGENTS.md
 PLAN_ACTION.md
 RAPPORT_AUDIT.md
+RAPPORT_AUDIT*.md
+audit_report.md
+submission_kit.md
 task.md
 implementation_plan.md
 walkthrough.md

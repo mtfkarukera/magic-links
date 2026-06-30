@@ -1,5 +1,43 @@
 /* popup.css : Design System "Glassmorphism / Magic Minimal" — MTF Karukera */
 
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 400;
+  src: url('fonts/Outfit-Regular.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 600;
+  src: url('fonts/Outfit-SemiBold.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 700;
+  src: url('fonts/Outfit-Bold.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  src: url('fonts/Inter-Regular.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  src: url('fonts/Inter-SemiBold.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  src: url('fonts/Inter-Bold.ttf') format('truetype');
+}
+
 :root {
   --bg-color: #f0f3f8;
   --panel-bg: rgba(255, 255, 255, 0.82);
@@ -69,6 +107,8 @@
     --shadow-color: rgba(0, 0, 0, 0.25);
     --shadow-dark: rgba(0, 0, 0, 0.35);
   }
+[hidden] {
+  display: none !important;
 }
 
 body {
@@ -83,6 +123,19 @@ body {
   color: var(--text-main);
   line-height: 1.4;
   overflow: hidden;
+}
+
+/* Cache visuellement un élément tout en le laissant accessible aux lecteurs d'écran (MTF Karukera) */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
 }
 
 /* App container */
@@ -183,7 +236,19 @@ body {
 }
 
 .toggle-container input[type="radio"] {
-  display: none;
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+.toggle-container input[type="radio"]:focus-visible + label {
+  outline: 2px solid var(--primary-color);
+  outline-offset: -2px;
+  border-radius: 4px;
 }
 
 .toggle-container label {
@@ -249,6 +314,13 @@ body {
   box-shadow: 0 0 0 2px var(--primary-light);
 }
 
+.search-wrapper input[type="text"]:focus-visible {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px var(--primary-light);
+  outline: 2px solid var(--primary-color);
+  outline-offset: -1px;
+}
+
 .clear-btn {
   position: absolute;
   right: 8px;
@@ -284,9 +356,16 @@ body {
 .checkbox-container input {
   position: absolute;
   opacity: 0;
-  cursor: pointer;
-  height: 0;
-  width: 0;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+.checkbox-container input:focus-visible ~ .checkmark {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
 }
 
 .checkmark {
@@ -478,7 +557,7 @@ body {
 .loader {
   width: 28px;
   height: 28px;
-  border: 3px stroke var(--border-color);
+  border: 3px solid var(--border-color);
   border-top: 3px solid var(--primary-color);
   border-radius: var(--radius-circle);
   animation: spin 1s linear infinite;
@@ -528,6 +607,11 @@ body {
 
 .select-wrapper select:focus {
   border-color: var(--primary-color);
+}
+
+.select-wrapper select:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
 }
 
 .select-wrapper::after {
@@ -611,4 +695,17 @@ body {
   15% { opacity: 1; transform: translate(-50%, 0); }
   85% { opacity: 1; transform: translate(-50%, 0); }
   100% { opacity: 0; transform: translate(-50%, -10px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logo-svg {
+    animation: none !important;
+  }
+  .loader {
+    animation: none !important;
+    border-top-color: var(--primary-color) !important;
+  }
+  .link-item, .action-btn, .toggle-slider {
+    transition: none !important;
+  }
 }

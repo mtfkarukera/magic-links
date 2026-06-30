@@ -72,5 +72,9 @@
   "copyError": {
     "message": "Kopieren fehlgeschlagen.",
     "description": "Benachrichtigung über fehlgeschlagenes Kopieren"
+  },
+  "pageNotSupported": {
+    "message": "Diese Seite wird nicht unterstützt.",
+    "description": "Fehlermeldung, wenn die Seite (PDF, Lesemodus usw.) nicht unterstützt wird"
   }
 }

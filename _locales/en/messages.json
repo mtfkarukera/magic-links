@@ -72,5 +72,9 @@
   "copyError": {
     "message": "Copy failed.",
     "description": "Notification of copy failure"
+  },
+  "pageNotSupported": {
+    "message": "This page is not supported.",
+    "description": "Error message when page (PDF, Reader Mode, etc.) is not supported"
   }
 }
