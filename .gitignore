@@ -6,6 +6,7 @@ Thumbs.db
 # Dossiers d'extension et de développement
 node_modules/
 .web-ext-artifacts/
+web-ext-artifacts/
 dist/
 
 # Fichiers privés et logs IA (Anti-Leak)
