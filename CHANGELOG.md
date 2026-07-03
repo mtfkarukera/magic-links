@@ -4,6 +4,12 @@ Toutes les modifications notables apportées à ce projet seront documentées da
 
 ---
 
+## [1.0.1] - 2026-07-04
+
+### Modifié
+- Remplacement de l'icône de l'extension par un nouveau design flat-design premium (`icone-magic-links.png`) représentant des blocs de données textuels et une chaîne de lien sous l'action d'une baguette magique.
+- Régénération de l'ensemble des déclinaisons de tailles d'icônes (`icon_16.png`, `icon_32.png`, `icon_48.png`, `icon_128.png`, `logo_full.png`).
+
 ## [1.0.0] - 2026-06-30
 
 ### Ajouté
