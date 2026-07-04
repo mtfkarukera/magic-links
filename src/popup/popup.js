@@ -380,8 +380,8 @@ function createLinkItemElement(link) {
   checkboxInput.className = 'link-checkbox';
   checkboxInput.checked = link.selected;
 
-  // Intercepte le clic sur la checkbox pour ne pas ouvrir le lien dans un onglet (MTF Karukera)
-  checkboxInput.addEventListener('click', (e) => {
+  // Intercepte le clic sur le label pour ne pas propager au conteneur parent et ainsi éviter d'ouvrir l'onglet (MTF Karukera)
+  checkboxLabel.addEventListener('click', (e) => {
     e.stopPropagation();
   });
 
