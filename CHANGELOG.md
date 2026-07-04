@@ -4,6 +4,15 @@ Toutes les modifications notables apportées à ce projet seront documentées da
 
 ---
 
+## [1.0.3] - 2026-07-04
+
+### Ajouté
+- Accordéons de domaines (Pliage/Dépliage) :
+  - Utilisation des balises HTML5 natives `<details>` et `<summary>` pour masquer ou afficher la liste de liens d'un domaine d'un clic.
+  - Flèche rotative animée (`▼` vers `▶`) avec transition CSS fluide lors du pliage/dépliage.
+  - Prise en charge complète de la navigation clavier native (Espace/Entrée) et styles de focus visibles pour l'accessibilité.
+  - Neutralisation de la propagation du clic sur la checkbox de domaine afin d'éviter le pliage ou dépliage involontaire lors de la sélection.
+
 ## [1.0.2] - 2026-07-04
 
 ### Ajouté

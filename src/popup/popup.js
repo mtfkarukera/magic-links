@@ -267,14 +267,20 @@ function renderLinksPreview() {
 
     // Rendu des groupes triés par nom de domaine
     Object.keys(groups).sort().forEach(domain => {
-      const groupDiv = document.createElement('div');
+      const groupDiv = document.createElement('details');
       groupDiv.className = 'domain-group';
+      groupDiv.open = true; // Ouvert par défaut (MTF Karukera)
 
-      const groupHeaderWrapper = document.createElement('div');
+      const groupHeaderWrapper = document.createElement('summary');
       groupHeaderWrapper.className = 'domain-group-header-wrapper';
 
       const checkboxLabel = document.createElement('label');
       checkboxLabel.className = 'checkbox-container domain-checkbox-container';
+
+      // Intercepte le clic sur le label pour ne pas plier/déplier l'accordéon (MTF Karukera)
+      checkboxLabel.addEventListener('click', (e) => {
+        e.stopPropagation();
+      });
 
       const checkboxInput = document.createElement('input');
       checkboxInput.type = 'checkbox';
@@ -321,12 +327,24 @@ function renderLinksPreview() {
       groupHeader.textContent = `${domain} (${domainLinks.length})`;
       groupHeaderWrapper.appendChild(groupHeader);
 
+      // Flèche rotative d'accordéon (MTF Karukera)
+      const arrow = document.createElement('span');
+      arrow.className = 'collapse-arrow';
+      arrow.textContent = '▼';
+      arrow.setAttribute('aria-hidden', 'true');
+      groupHeaderWrapper.appendChild(arrow);
+
       groupDiv.appendChild(groupHeaderWrapper);
 
+      // Conteneur de liste pour l'accordéondetails (MTF Karukera)
+      const linksList = document.createElement('div');
+      linksList.className = 'domain-links-list';
+
       domainLinks.forEach(link => {
-        groupDiv.appendChild(createLinkItemElement(link));
+        linksList.appendChild(createLinkItemElement(link));
       });
 
+      groupDiv.appendChild(linksList);
       resultsList.appendChild(groupDiv);
     });
   } else {

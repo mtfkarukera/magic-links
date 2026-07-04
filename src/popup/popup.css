@@ -463,6 +463,19 @@ body {
   border-radius: var(--radius-sm);
   padding: 2px var(--space-sm);
   margin-bottom: 6px;
+  cursor: pointer;
+  list-style: none; /* Cacher le triangle par défaut */
+  outline: none;
+}
+
+/* Cacher le triangle natif de Chrome/Safari/Firefox (MTF Karukera) */
+.domain-group-header-wrapper::-webkit-details-marker {
+  display: none;
+}
+
+.domain-group-header-wrapper:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 1px;
 }
 
 .domain-group-header {
@@ -477,6 +490,27 @@ body {
 
 .domain-checkbox-container {
   margin: 0 !important;
+}
+
+.collapse-arrow {
+  font-size: 9px;
+  color: var(--primary-color);
+  transition: transform 0.2s ease;
+  user-select: none;
+  margin-left: auto;
+  padding-right: 4px;
+}
+
+.domain-group[open] .collapse-arrow {
+  transform: rotate(0deg);
+}
+
+.domain-group:not([open]) .collapse-arrow {
+  transform: rotate(-90deg);
+}
+
+.domain-group:not([open]) .domain-group-header-wrapper {
+  opacity: 0.85;
 }
 
 /* Éléments de lien */
