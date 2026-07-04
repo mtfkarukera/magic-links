@@ -121,7 +121,7 @@ body {
   padding: var(--space-sm);
   box-sizing: border-box;
   background-color: var(--bg-color);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Outfit', 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   color: var(--text-main);
   line-height: 1.4;
   overflow: hidden;
@@ -336,6 +336,12 @@ body {
 
 .clear-btn:hover {
   color: var(--text-main);
+}
+
+.clear-btn:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 1px;
+  border-radius: var(--radius-sm);
 }
 
 /* Options */
@@ -724,8 +730,21 @@ body {
   transition: opacity 0.2s, transform 0.1s;
 }
 
-.action-btn:active {
+.action-btn:active:not(:disabled) {
   transform: scale(0.98);
+}
+
+.action-btn:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 3px;
+}
+
+.action-btn:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none !important;
+  filter: grayscale(30%);
 }
 
 .btn-primary {
@@ -734,7 +753,7 @@ body {
   box-shadow: 0 4px 10px rgba(233, 64, 87, 0.25);
 }
 
-.btn-primary:hover {
+.btn-primary:hover:not(:disabled) {
   opacity: 0.95;
 }
 
@@ -743,7 +762,7 @@ body {
   color: var(--btn-secondary-text);
 }
 
-.btn-secondary:hover {
+.btn-secondary:hover:not(:disabled) {
   background: var(--btn-secondary-hover);
 }
 

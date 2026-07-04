@@ -80,5 +80,13 @@
   "pageNotSupported": {
     "message": "Trang này không được hỗ trợ.",
     "description": "Thông báo lỗi khi trang (PDF, chế độ đọc, v.v.) không được hỗ trợ"
+  },
+  "searchLabel": {
+    "message": "Tìm kiếm liên kết",
+    "description": "Nhãn có thể truy cập cho hộp tìm kiếm"
+  },
+  "clearSearchLabel": {
+    "message": "Xóa tìm kiếm",
+    "description": "Nhãn có thể truy cập để xóa hộp tìm kiếm"
   }
 }

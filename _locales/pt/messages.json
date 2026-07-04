@@ -80,5 +80,13 @@
   "pageNotSupported": {
     "message": "Esta página não é suportada.",
     "description": "Mensagem de erro quando a página (PDF, modo de leitura, etc.) não é suportada"
+  },
+  "searchLabel": {
+    "message": "Pesquisar links",
+    "description": "Rótulo acessível para o campo de pesquisa"
+  },
+  "clearSearchLabel": {
+    "message": "Limpar pesquisa",
+    "description": "Rótulo acessível para limpar o campo de pesquisa"
   }
 }

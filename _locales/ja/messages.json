@@ -80,5 +80,13 @@
   "pageNotSupported": {
     "message": "このページはサポートされていません。",
     "description": "ページ（PDF、リーダーモードなど）がサポートされていない時のエラーメッセージ"
+  },
+  "searchLabel": {
+    "message": "リンクを検索",
+    "description": "検索入力欄のアクセシブルなラベル"
+  },
+  "clearSearchLabel": {
+    "message": "検索をクリア",
+    "description": "検索クリアボタンのアクセシブルなラベル"
   }
 }

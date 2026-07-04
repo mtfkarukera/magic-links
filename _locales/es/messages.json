@@ -80,5 +80,13 @@
   "pageNotSupported": {
     "message": "Esta página no está soportada.",
     "description": "Mensaje de error cuando la página (PDF, modo lectura, etc.) no es compatible"
+  },
+  "searchLabel": {
+    "message": "Buscar un enlace",
+    "description": "Etiqueta accesible para el campo de búsqueda"
+  },
+  "clearSearchLabel": {
+    "message": "Borrar búsqueda",
+    "description": "Etiqueta accesible para borrar la búsqueda"
   }
 }

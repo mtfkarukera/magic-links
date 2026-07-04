@@ -80,5 +80,13 @@
   "pageNotSupported": {
     "message": "Diese Seite wird nicht unterstützt.",
     "description": "Fehlermeldung, wenn die Seite (PDF, Lesemodus usw.) nicht unterstützt wird"
+  },
+  "searchLabel": {
+    "message": "Links suchen",
+    "description": "Barrierefreies Label für das Suchfeld"
+  },
+  "clearSearchLabel": {
+    "message": "Suche löschen",
+    "description": "Barrierefreies Label zum Löschen des Suchfelds"
   }
 }

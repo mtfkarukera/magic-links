@@ -2,6 +2,7 @@
 
 import { t, applyI18n, escapeCSV, escapeMarkdownText } from '../shared/utils.js';
 
+
 // Variables globales de l'application
 let allLinks = [];
 let filteredLinks = [];
@@ -9,6 +10,7 @@ let readabilityActive = false;
 let activeTab = null;
 let toastTimer = null;
 let searchDebounceTimer = null;
+let isScanning = false;
 
 // Éléments du DOM
 const modeContentRadio = document.getElementById('mode-content');
@@ -51,6 +53,8 @@ document.addEventListener('DOMContentLoaded', async () => {
  * Scan de la page active et extraction des liens
  */
 async function scanActiveTab() {
+  if (isScanning) return;
+  isScanning = true;
   showLoader();
   try {
     const tabs = await browser.tabs.query({ active: true, currentWindow: true });
@@ -63,7 +67,7 @@ async function scanActiveTab() {
 
     // Protection contre les pages système, fichiers PDF et le Mode Lecture (MTF Karukera)
     const isWebPage = activeTab.url.startsWith('http://') || activeTab.url.startsWith('https://');
-    const isPDF = activeTab.url.toLowerCase().endsWith('.pdf') || activeTab.url.includes('viewer.html');
+    const isPDF = activeTab.url.toLowerCase().endsWith('.pdf') || activeTab.url.includes('pdf.js/web/viewer.html');
     const isReaderMode = activeTab.url.startsWith('about:reader');
     if (!isWebPage || isPDF || isReaderMode) {
       showEmptyState('pageNotSupported', '');
@@ -77,7 +81,14 @@ async function scanActiveTab() {
     });
 
     if (!readabilityResult || !readabilityResult[0]) {
-      console.warn('[ML] Readability.js non injecté correctement.');
+      throw new Error('Readability.js non injecté correctement.');
+    }
+
+    // Vérification de sécurité anti-race-condition : l'onglet a-t-il navigué entre temps ? (MTF Karukera)
+    const currentTabs = await browser.tabs.query({ active: true, currentWindow: true });
+    const currentTab = currentTabs[0];
+    if (!currentTab || currentTab.id !== activeTab.id || currentTab.url !== activeTab.url) {
+      throw new Error("L'onglet actif a navigué ou a été modifié pendant l'analyse.");
     }
 
     // 2. Injection du scanner de liens
@@ -102,6 +113,9 @@ async function scanActiveTab() {
         modeFullRadio.checked = true;
       }
       
+      // Repasser isScanning à false AVANT d'exécuter handleModeOrFilterChange pour éviter
+      // que le verrou isScanning ne court-circuite le premier rendu graphique (MTF Karukera)
+      isScanning = false;
       handleModeOrFilterChange();
     } else {
       showEmptyState('noLinksFound', 'fallbackSuggestion');
@@ -109,6 +123,8 @@ async function scanActiveTab() {
   } catch (err) {
     console.error('[ML] Erreur lors de l\'analyse de la page :', err.message);
     showEmptyState('noLinksFound', 'fallbackSuggestion');
+  } finally {
+    isScanning = false;
   }
 }
 
@@ -116,6 +132,7 @@ async function scanActiveTab() {
  * Gestion du changement de mode (Toggle) ou d'options (Groupement)
  */
 function handleModeOrFilterChange() {
+  if (isScanning) return;
   const mode = document.querySelector('input[name="capture-mode"]:checked').value;
   const searchVal = searchInput.value.toLowerCase().trim();
   
@@ -680,9 +697,6 @@ function handleDownload() {
   }, 1000);
 }
 
-/**
- * Affiche une notification toast éphémère
- */
 function showToast(message) {
   // Annuler le timer existant pour éviter les conflits (MTF Karukera)
   if (toastTimer) {
@@ -691,12 +705,10 @@ function showToast(message) {
   toastEl.textContent = message;
   toastEl.hidden = false;
 
-  // Clone pour relancer les animations CSS facilement
-  const newToast = toastEl.cloneNode(true);
-  toastEl.parentNode.replaceChild(newToast, toastEl);
-  
-  // Réassignation de la référence
-  toastEl = newToast;
+  // Réinitialisation de l'animation par reflow (MTF Karukera - Audit robustesse)
+  toastEl.style.animation = 'none';
+  void toastEl.offsetWidth; // Reflow forcé
+  toastEl.style.animation = '';
 
   // Masquer après 2 secondes (durée de l'animation)
   toastTimer = setTimeout(() => {

@@ -4,6 +4,21 @@ Toutes les modifications notables apportées à ce projet seront documentées da
 
 ---
 
+## [1.0.4] - 2026-07-05
+
+### Corrigé
+- **Accessibilité WCAG 2.1 AA** :
+  - Ajout d'un label accessible masqué pour la barre de recherche (`search-input`).
+  - Ajout d'un attribut `aria-label` et de styles `:focus-visible` pour le bouton d'effacement de la recherche (`#clear-search`).
+  - Ajout de styles `:focus-visible` bien visibles pour les boutons d'action d'exportation (`.action-btn`).
+  - Correction de l'ordre de priorité de la propriété `font-family` dans le CSS pour charger correctement les polices *Outfit* et *Inter* embarquées à la place des polices système.
+- **Robustesse & Performance** :
+  - Remplacement de la méthode destructrice `cloneNode` du Toast par un reflow forcé via `offsetWidth` afin de préserver l'annonce `aria-live` pour les lecteurs d'écran et d'éliminer le bug d'affichage infini.
+  - Ajout d'un verrou `isScanning` et désactivation des opérations de filtres/toggles durant le scan pour éliminer tout conflit d'affichage.
+  - Correction de l'heuristique de détection PDF pour exclure les faux positifs des URLs ordinaires contenant la chaîne `viewer.html` en restreignant à `pdf.js/web/viewer.html`.
+  - Sécurisation du processus d'injection asynchrone : arrêt de l'analyse avec `return` si l'injection de `Readability.js` échoue, et vérification de la cohérence de l'onglet actif (ID et URL) entre les injections pour parer aux navigations rapides de l'utilisateur.
+  - Ajout de styles `:disabled` pour les boutons d'exportation.
+
 ## [1.0.3] - 2026-07-04
 
 ### Ajouté

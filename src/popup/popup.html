@@ -16,7 +16,7 @@
         </svg>
         <h1>Magic Links</h1>
       </div>
-      <span class="version-tag">v1.0.3</span>
+      <span class="version-tag">v1.0.4</span>
     </header>
 
     <!-- Zone principale -->
@@ -40,8 +40,9 @@
       <!-- Barre de recherche rapide -->
       <section class="controls-search">
         <div class="search-wrapper">
+          <label for="search-input" class="visually-hidden" data-i18n="searchLabel">Rechercher un lien</label>
           <input type="text" id="search-input" data-i18n="searchPlaceholder" data-i18n-attr="placeholder" placeholder="Rechercher un lien..." autocomplete="off">
-          <button id="clear-search" class="clear-btn" hidden>&times;</button>
+          <button id="clear-search" class="clear-btn" hidden data-i18n="clearSearchLabel" data-i18n-attr="aria-label" aria-label="Effacer la recherche">&times;</button>
         </div>
       </section>
 
