@@ -10,6 +10,9 @@ Toutes les modifications notables apportées à ce projet seront documentées da
 - Remplacement de l'icône de l'extension par un nouveau design flat-design premium (`icone-magic-links.png`) représentant des blocs de données textuels et une chaîne de lien sous l'action d'une baguette magique.
 - Régénération de l'ensemble des déclinaisons de tailles d'icônes (`icon_16.png`, `icon_32.png`, `icon_48.png`, `icon_128.png`, `logo_full.png`).
 
+### Corrigé
+- Erreur de syntaxe CSS (accolade fermante de media query manquante) qui empêchait le chargement de tout le style de la popup sur les systèmes configurés en mode clair (Light Mode).
+
 ## [1.0.0] - 2026-06-30
 
 ### Ajouté
