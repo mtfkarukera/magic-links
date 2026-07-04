@@ -27,6 +27,10 @@
     "message": "ドメインでグループ化",
     "description": "ドメインごとにグループ化するオプション"
   },
+  "checkboxSelectAll": {
+    "message": "すべて選択",
+    "description": "すべてのリンクを選択するオプション"
+  },
   "selectFormatLabel": {
     "message": "形式",
     "description": "出力形式のラベル"

@@ -4,6 +4,16 @@ Toutes les modifications notables apportées à ce projet seront documentées da
 
 ---
 
+## [1.0.2] - 2026-07-04
+
+### Ajouté
+- Fonctionnalité de sélection interactive de liens pour l'exportation :
+  - Checkbox globale pour tout cocher ou tout décocher (avec prise en charge de l'état partiel "indeterminate" de HTML5).
+  - Checkboxes par domaine pour cocher ou décocher l'ensemble des liens issus d'un même domaine en un seul clic.
+  - Checkboxes individuelles sur chaque élément de lien pour personnaliser précisément le lot de liens à copier ou à télécharger.
+  - Mise à jour dynamique du compteur de résultats pour refléter la sélection (ex: `12 / 87 liens trouvés`).
+  - Grisement visuel des éléments désélectionnés (opacité réduite à 45%) et masquage des effets au survol pour un meilleur confort visuel.
+
 ## [1.0.1] - 2026-07-04
 
 ### Modifié

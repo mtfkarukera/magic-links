@@ -56,3 +56,15 @@ Chaque lien se voit attribuer un score de pertinence numérique pour trier les l
   - Sinon : **+1 pt** par caractère ou mot descriptif (plafonné à **+20 pts**).
 * **Contexte externe** :
   - Lien externe (vers un autre domaine que l'hôte) : **+10 pts** (souvent une source ou référence intéressante).
+
+### 3.3 Gestion de l'état de sélection
+Les liens sont présentés dans la popup sous forme d'une liste interactive à choix multiples :
+1. **Initialisation** : À l'issue du scan, chaque lien se voit attribuer un attribut dynamique `selected: true` dans la variable globale `allLinks`.
+2. **Synchronisation** :
+   - **Individuelle** : Cliquer sur la checkbox d'un lien bascule sa propriété `selected` et sa classe CSS (`.is-unselected`).
+   - **Par domaine** : Cliquer sur la checkbox d'un groupe de domaine coche/décoche tous les liens associés et ajuste l'affichage en cascade.
+   - **Globale** : La checkbox d'en-tête (Tout cocher) modifie l'état de tous les liens filtrés de manière synchrone et prend en charge l'état partiel `indeterminate` de HTML5.
+3. **Filtrage à l'export** : Les fonctions de copie dans le presse-papiers (`handleCopy`) et de téléchargement de fichier (`handleDownload`) filtrent les liens via `filteredLinks.filter(link => link.selected)` avant de générer la chaîne finale.
+
+---
+*Développé par **MTF Karukera**. Découvre toutes les solutions logicielles et outils de productivité de la suite **magic-softs** sur [magic-clipper.mtfk.fr](https://magic-clipper.mtfk.fr/).*

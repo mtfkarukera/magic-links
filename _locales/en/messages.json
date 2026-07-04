@@ -27,6 +27,10 @@
     "message": "Group by domain",
     "description": "Option to group by domain"
   },
+  "checkboxSelectAll": {
+    "message": "Select All",
+    "description": "Option to select or deselect all links"
+  },
   "selectFormatLabel": {
     "message": "Format",
     "description": "Label for the export format"

@@ -19,8 +19,10 @@ Elle résout le problème du "bruit" et de la consommation inutile de tokens en 
 *   **Filtrage & Structuration** :
     *   Recherche rapide (Fast Research) à la volée.
     *   Regroupement optionnel par nom de domaine.
+    *   **Sélection interactive à la carte** : Cochez/décochez les liens individuellement, par domaine, ou tout d'un coup (sélection globale) pour choisir précisément ce que vous exportez.
 *   **Exports Multi-formats** :
-    *   **Texte brut** : Liste plate d'une URL par ligne (format optimisé pour le grounding dans les IA).
+    *   **🧠 NotebookLM (URLs) [Par défaut]** : Liste d'une URL par ligne optimisée pour le collage rapide.
+    *   **Texte brut** : Liste d'une URL par ligne (format classique).
     *   **Markdown** : Liste à puces standard, structurée par domaines si le regroupement est activé.
     *   **CSV** : Liste structurée avec colonnes `Title, URL, Domain, Score, IsContent`.
     *   **JSON** : Format structuré plat ou hiérarchique par domaine.

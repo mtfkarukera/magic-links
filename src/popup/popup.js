@@ -17,6 +17,8 @@ const searchInput = document.getElementById('search-input');
 const clearSearchBtn = document.getElementById('clear-search');
 const groupDomainCheckbox = document.getElementById('group-domain-checkbox');
 const resultsCounter = document.getElementById('results-counter');
+const selectAllCheckbox = document.getElementById('select-all-checkbox');
+const selectAllContainer = document.querySelector('.select-all-container');
 const resultsList = document.getElementById('results-list');
 const resultsFallback = document.getElementById('results-fallback');
 const exportFormatSelect = document.getElementById('export-format');
@@ -37,6 +39,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   searchInput.addEventListener('input', handleSearchInput);
   clearSearchBtn.addEventListener('click', handleClearSearch);
   groupDomainCheckbox.addEventListener('change', handleModeOrFilterChange);
+  selectAllCheckbox.addEventListener('change', handleSelectAllChange);
   btnCopy.addEventListener('click', handleCopy);
   btnDownload.addEventListener('click', handleDownload);
 
@@ -88,6 +91,11 @@ async function scanActiveTab() {
       allLinks = data.links || [];
       readabilityActive = data.readabilityActive || false;
       
+      // Initialise l'état sélectionné par défaut sur chaque lien (MTF Karukera)
+      allLinks.forEach(link => {
+        link.selected = true;
+      });
+      
       // S'il n'y a aucun lien détecté dans le contenu de l'article,
       // on bascule automatiquement vers le mode complet pour ne pas afficher une liste vide.
       if (allLinks.filter(l => l.isContent).length === 0) {
@@ -130,6 +138,9 @@ function handleModeOrFilterChange() {
 
   // 3. Mise à jour du compteur
   updateCounter(filteredLinks.length, mode);
+  
+  // Synchronisation de la checkbox globale
+  syncSelectAllCheckbox();
 
   // 4. Rendu visuel
   if (filteredLinks.length === 0) {
@@ -137,12 +148,12 @@ function handleModeOrFilterChange() {
       'noLinksFound',
       mode === 'content' ? 'fallbackSuggestion' : ''
     );
+    btnCopy.disabled = true;
+    btnDownload.disabled = true;
   } else {
-    // Activer les boutons d'export (MTF Karukera)
-    btnCopy.disabled = false;
-    btnDownload.disabled = false;
     hideEmptyState();
     renderLinksPreview();
+    updateExportButtonsState();
   }
 }
 
@@ -220,12 +231,17 @@ function hideEmptyState() {
  * Met à jour le libellé du compteur dynamique de liens
  */
 function updateCounter(count, mode) {
+  const selectedCount = filteredLinks.filter(l => l.selected).length;
   const renderedText = count > 200 ? ' (affichage des 200 premiers)' : '';
+  let baseText = '';
+  
   if (mode === 'content') {
-    resultsCounter.textContent = t('contentLinksFoundCount', String(count)) + renderedText;
+    baseText = t('contentLinksFoundCount', String(count));
   } else {
-    resultsCounter.textContent = t('linksFoundCount', String(count)) + renderedText;
+    baseText = t('linksFoundCount', String(count));
   }
+  
+  resultsCounter.textContent = `${selectedCount} / ${baseText}${renderedText}`;
 }
 
 /**
@@ -254,12 +270,60 @@ function renderLinksPreview() {
       const groupDiv = document.createElement('div');
       groupDiv.className = 'domain-group';
 
+      const groupHeaderWrapper = document.createElement('div');
+      groupHeaderWrapper.className = 'domain-group-header-wrapper';
+
+      const checkboxLabel = document.createElement('label');
+      checkboxLabel.className = 'checkbox-container domain-checkbox-container';
+
+      const checkboxInput = document.createElement('input');
+      checkboxInput.type = 'checkbox';
+      checkboxInput.className = 'domain-checkbox';
+
+      const domainLinks = groups[domain];
+      const allChecked = domainLinks.every(link => link.selected);
+      const someChecked = domainLinks.some(link => link.selected);
+      checkboxInput.checked = allChecked;
+      checkboxInput.indeterminate = someChecked && !allChecked;
+
+      checkboxInput.addEventListener('change', () => {
+        const checked = checkboxInput.checked;
+        domainLinks.forEach(link => link.selected = checked);
+        
+        // Mettre à jour visuellement les items sous ce domaine
+        const groupItems = groupDiv.querySelectorAll('.link-item');
+        groupItems.forEach((item, index) => {
+          const cb = item.querySelector('.link-checkbox');
+          if (cb) cb.checked = checked;
+          if (checked) {
+            item.classList.remove('is-unselected');
+            item.setAttribute('aria-checked', 'true');
+          } else {
+            item.classList.add('is-unselected');
+            item.setAttribute('aria-checked', 'false');
+          }
+        });
+
+        syncSelectAllCheckbox();
+        updateCounter(filteredLinks.length, document.querySelector('input[name="capture-mode"]:checked').value);
+        updateExportButtonsState();
+      });
+
+      const checkmarkSpan = document.createElement('span');
+      checkmarkSpan.className = 'checkmark';
+
+      checkboxLabel.appendChild(checkboxInput);
+      checkboxLabel.appendChild(checkmarkSpan);
+      groupHeaderWrapper.appendChild(checkboxLabel);
+
       const groupHeader = document.createElement('h3'); // H3 pour accessibilité (MTF Karukera)
       groupHeader.className = 'domain-group-header';
-      groupHeader.textContent = `${domain} (${groups[domain].length})`;
-      groupDiv.appendChild(groupHeader);
+      groupHeader.textContent = `${domain} (${domainLinks.length})`;
+      groupHeaderWrapper.appendChild(groupHeader);
 
-      groups[domain].forEach(link => {
+      groupDiv.appendChild(groupHeaderWrapper);
+
+      domainLinks.forEach(link => {
         groupDiv.appendChild(createLinkItemElement(link));
       });
 
@@ -279,7 +343,11 @@ function renderLinksPreview() {
 function createLinkItemElement(link) {
   const item = document.createElement('div');
   item.className = 'link-item';
-  item.setAttribute('role', 'link');
+  if (!link.selected) {
+    item.classList.add('is-unselected');
+  }
+  item.setAttribute('role', 'checkbox');
+  item.setAttribute('aria-checked', link.selected ? 'true' : 'false');
   item.setAttribute('tabindex', '0');
   item.setAttribute('aria-label', `${link.title} — ${link.url}`);
 
@@ -303,6 +371,59 @@ function createLinkItemElement(link) {
     }
   });
 
+  // Checkbox du lien
+  const checkboxLabel = document.createElement('label');
+  checkboxLabel.className = 'checkbox-container link-checkbox-container';
+
+  const checkboxInput = document.createElement('input');
+  checkboxInput.type = 'checkbox';
+  checkboxInput.className = 'link-checkbox';
+  checkboxInput.checked = link.selected;
+
+  // Intercepte le clic sur la checkbox pour ne pas ouvrir le lien dans un onglet (MTF Karukera)
+  checkboxInput.addEventListener('click', (e) => {
+    e.stopPropagation();
+  });
+
+  checkboxInput.addEventListener('change', () => {
+    link.selected = checkboxInput.checked;
+    if (link.selected) {
+      item.classList.remove('is-unselected');
+      item.setAttribute('aria-checked', 'true');
+    } else {
+      item.classList.add('is-unselected');
+      item.setAttribute('aria-checked', 'false');
+    }
+
+    // Synchroniser l'en-tête du groupe de domaine si présent
+    const domainGroup = item.closest('.domain-group');
+    if (domainGroup) {
+      const domainCheckbox = domainGroup.querySelector('.domain-checkbox');
+      const siblingCheckboxes = Array.from(domainGroup.querySelectorAll('.link-checkbox'));
+      const allSiblingsChecked = siblingCheckboxes.every(cb => cb.checked);
+      const someSiblingsChecked = siblingCheckboxes.some(cb => cb.checked);
+      if (domainCheckbox) {
+        domainCheckbox.checked = allSiblingsChecked;
+        domainCheckbox.indeterminate = someSiblingsChecked && !allSiblingsChecked;
+      }
+    }
+
+    syncSelectAllCheckbox();
+    updateCounter(filteredLinks.length, document.querySelector('input[name="capture-mode"]:checked').value);
+    updateExportButtonsState();
+  });
+
+  const checkmarkSpan = document.createElement('span');
+  checkmarkSpan.className = 'checkmark';
+
+  checkboxLabel.appendChild(checkboxInput);
+  checkboxLabel.appendChild(checkmarkSpan);
+  item.appendChild(checkboxLabel);
+
+  // Wrapper pour le contenu textuel du lien
+  const contentWrapper = document.createElement('div');
+  contentWrapper.className = 'link-content-wrapper';
+
   const header = document.createElement('div');
   header.className = 'link-header';
 
@@ -316,12 +437,14 @@ function createLinkItemElement(link) {
   score.textContent = `S: ${link.score}`;
   header.appendChild(score);
 
-  item.appendChild(header);
+  contentWrapper.appendChild(header);
 
   const url = document.createElement('span');
   url.className = 'link-url';
   url.textContent = link.url;
-  item.appendChild(url);
+  contentWrapper.appendChild(url);
+
+  item.appendChild(contentWrapper);
 
   return item;
 }
@@ -331,17 +454,22 @@ function createLinkItemElement(link) {
  */
 function generateExportData(format) {
   const groupDomain = groupDomainCheckbox.checked;
+  const exportableLinks = filteredLinks.filter(link => link.selected);
+
+  if (exportableLinks.length === 0) {
+    return '';
+  }
 
   switch (format) {
     case 'notebooklm':
       // Format optimisé pour NotebookLM : une URL par ligne, prête à coller (MTF Karukera)
-      return filteredLinks.map(link => link.url).join('\n');
+      return exportableLinks.map(link => link.url).join('\n');
 
     case 'markdown':
       if (groupDomain) {
         // Groupé par domaine avec des titres
         const groups = {};
-        filteredLinks.forEach(link => {
+        exportableLinks.forEach(link => {
           if (!groups[link.domain]) groups[link.domain] = [];
           groups[link.domain].push(link);
         });
@@ -357,7 +485,7 @@ function generateExportData(format) {
         }).join('\n\n');
       } else {
         // Liste plate
-        return filteredLinks
+        return exportableLinks
           .map(link => {
             const safeUrl = link.url.replace(/\(/g, '%28').replace(/\)/g, '%29');
             return `- [${escapeMarkdownText(link.title)}](${safeUrl})`;
@@ -367,12 +495,12 @@ function generateExportData(format) {
 
     case 'text':
       // Une URL par ligne (optimisé IA)
-      return filteredLinks.map(link => link.url).join('\n');
+      return exportableLinks.map(link => link.url).join('\n');
 
     case 'csv':
       // Titre, URL, Domaine, Score, Corps principal
       const headers = 'Title,URL,Domain,Score,IsContent';
-      const rows = filteredLinks.map(link => {
+      const rows = exportableLinks.map(link => {
         return `${escapeCSV(link.title)},${escapeCSV(link.url)},${escapeCSV(link.domain)},${link.score},${link.isContent}`;
       });
       return [headers, ...rows].join('\n');
@@ -381,7 +509,7 @@ function generateExportData(format) {
       if (groupDomain) {
         // Objet indexé par domaine
         const groups = {};
-        filteredLinks.forEach(link => {
+        exportableLinks.forEach(link => {
           if (!groups[link.domain]) groups[link.domain] = [];
           groups[link.domain].push({
             title: link.title,
@@ -393,7 +521,7 @@ function generateExportData(format) {
         return JSON.stringify(groups, null, 2);
       } else {
         // Tableau plat
-        return JSON.stringify(filteredLinks, null, 2);
+        return JSON.stringify(exportableLinks, null, 2);
       }
 
     default:
@@ -402,13 +530,73 @@ function generateExportData(format) {
 }
 
 /**
+ * Gère le changement d'état de la checkbox de sélection globale
+ */
+function handleSelectAllChange() {
+  const isChecked = selectAllCheckbox.checked;
+  filteredLinks.forEach(link => {
+    link.selected = isChecked;
+  });
+
+  // Rafraîchir les éléments visuels de la liste
+  const items = resultsList.querySelectorAll('.link-item');
+  items.forEach(item => {
+    const cb = item.querySelector('.link-checkbox');
+    if (cb) cb.checked = isChecked;
+    if (isChecked) {
+      item.classList.remove('is-unselected');
+      item.setAttribute('aria-checked', 'true');
+    } else {
+      item.classList.add('is-unselected');
+      item.setAttribute('aria-checked', 'false');
+    }
+  });
+
+  // Rafraîchir également les checkboxes de domaine si le groupement est actif
+  if (groupDomainCheckbox.checked) {
+    const domainCbs = resultsList.querySelectorAll('.domain-checkbox');
+    domainCbs.forEach(cb => {
+      cb.checked = isChecked;
+      cb.indeterminate = false;
+    });
+  }
+
+  updateCounter(filteredLinks.length, document.querySelector('input[name="capture-mode"]:checked').value);
+  updateExportButtonsState();
+}
+
+/**
+ * Synchronise l'état de la checkbox de sélection globale en fonction des liens visibles
+ */
+function syncSelectAllCheckbox() {
+  if (filteredLinks.length === 0) {
+    selectAllContainer.style.display = 'none';
+    return;
+  }
+  selectAllContainer.style.display = 'inline-flex';
+  const allChecked = filteredLinks.every(link => link.selected);
+  const someChecked = filteredLinks.some(link => link.selected);
+  selectAllCheckbox.checked = allChecked;
+  selectAllCheckbox.indeterminate = someChecked && !allChecked;
+}
+
+/**
+ * Active ou désactive les boutons d'export selon qu'il y a des liens sélectionnés ou non
+ */
+function updateExportButtonsState() {
+  const selectedCount = filteredLinks.filter(l => l.selected).length;
+  const isDisabled = selectedCount === 0;
+  btnCopy.disabled = isDisabled;
+  btnDownload.disabled = isDisabled;
+}
+
+/**
  * Action de copie dans le presse-papiers
  */
 async function handleCopy() {
-  if (filteredLinks.length === 0) return;
-
   const format = exportFormatSelect.value;
   const exportText = generateExportData(format);
+  if (!exportText) return;
 
   try {
     await navigator.clipboard.writeText(exportText);
@@ -423,10 +611,9 @@ async function handleCopy() {
  * Action de téléchargement du fichier
  */
 function handleDownload() {
-  if (filteredLinks.length === 0) return;
-
   const format = exportFormatSelect.value;
   const exportText = generateExportData(format);
+  if (!exportText) return;
 
   let mimeType = 'text/plain';
   let extension = 'txt';

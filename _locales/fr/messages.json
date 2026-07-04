@@ -27,6 +27,10 @@
     "message": "Grouper par domaine",
     "description": "Option de regroupement par domaine"
   },
+  "checkboxSelectAll": {
+    "message": "Tout cocher",
+    "description": "Option de sélection globale de tous les liens"
+  },
   "selectFormatLabel": {
     "message": "Format",
     "description": "Libellé du format d'export"

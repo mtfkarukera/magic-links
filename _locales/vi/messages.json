@@ -27,6 +27,10 @@
     "message": "Gom nhóm theo tên miền",
     "description": "Tùy chọn gom nhóm theo tên miền"
   },
+  "checkboxSelectAll": {
+    "message": "Chọn tất cả",
+    "description": "Tùy chọn chọn tất cả liên kết"
+  },
   "selectFormatLabel": {
     "message": "Định dạng",
     "description": "Nhãn cho định dạng xuất"
