@@ -147,6 +147,20 @@ body {
   height: 100%;
   width: 100%;
   overflow: hidden;
+  background: radial-gradient(circle at 50% -20%, rgba(138, 35, 135, 0.04) 0%, transparent 60%),
+              radial-gradient(circle at 50% 120%, rgba(233, 64, 87, 0.02) 0%, transparent 70%),
+              var(--panel-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-sizing: border-box;
+}
+
+@media (prefers-color-scheme: dark) {
+  .app-container {
+    background: radial-gradient(circle at 50% -20%, rgba(233, 64, 87, 0.08) 0%, transparent 60%),
+                radial-gradient(circle at 50% 120%, rgba(242, 113, 33, 0.04) 0%, transparent 70%),
+                var(--panel-bg);
+  }
 }
 
 /* Sections Glassmorphism */
@@ -399,21 +413,39 @@ body {
 .checkmark:after {
   content: "";
   position: absolute;
-  display: none;
-}
-
-.checkbox-container input:checked ~ .checkmark:after {
-  display: block;
-}
-
-.checkbox-container .checkmark:after {
   left: 5px;
   top: 2px;
   width: 4px;
   height: 8px;
   border: solid white;
   border-width: 0 2px 2px 0;
-  transform: rotate(45deg);
+  transform: rotate(45deg) scale(0.6);
+  opacity: 0;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.15s ease;
+}
+
+.checkbox-container input:checked ~ .checkmark:after {
+  opacity: 1;
+  transform: rotate(45deg) scale(1);
+}
+
+/* Support visuel pour l'état indeterminate sur notre checkmark personnalisé (MTF Karukera - Sprint C) */
+.checkbox-container input:indeterminate ~ .checkmark {
+  background: var(--accent-grad);
+  border-color: transparent;
+}
+
+.checkbox-container input:indeterminate ~ .checkmark:after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 7px;
+  width: 8px;
+  height: 2px;
+  background: white;
+  transform: scaleX(1);
+  opacity: 1;
+  transition: transform 0.15s ease, opacity 0.1s ease;
 }
 
 /* Results metadata */
@@ -468,7 +500,7 @@ body {
   background: var(--primary-light);
   border-radius: var(--radius-sm);
   padding: 2px var(--space-sm);
-  margin-bottom: 6px;
+  margin-bottom: 3px; /* Rapprochement du groupe de domaine de la liste de liens (MTF Karukera - Sprint C) */
   cursor: pointer;
   list-style: none; /* Cacher le triangle par défaut */
   outline: none;
@@ -558,20 +590,41 @@ body {
   background: var(--bg-element);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
-  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s, opacity 0.2s;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease, border-color 0.2s ease, opacity 0.2s ease, background 0.25s ease;
   cursor: pointer;
+}
+
+/* Style de sélection premium (MTF Karukera - Sprint C) */
+.link-item[aria-checked="true"] {
+  background: linear-gradient(135deg, rgba(138, 35, 135, 0.03) 0%, rgba(233, 64, 87, 0.03) 100%);
+  border-color: rgba(138, 35, 135, 0.25);
+}
+
+@media (prefers-color-scheme: dark) {
+  .link-item[aria-checked="true"] {
+    background: linear-gradient(135deg, rgba(233, 64, 87, 0.05) 0%, rgba(242, 113, 33, 0.05) 100%);
+    border-color: rgba(233, 64, 87, 0.35);
+  }
 }
 
 .link-item:hover {
   transform: translateY(-1px);
   box-shadow: 0 4px 8px var(--shadow-color);
-  border-color: rgba(233, 64, 87, 0.3);
+  border-color: rgba(233, 64, 87, 0.4);
+}
+
+/* Focus visible moderne et accessible (MTF Karukera - Sprint C) */
+.link-item:focus-visible {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px var(--primary-light);
 }
 
 .link-item.is-unselected {
   opacity: 0.45;
   box-shadow: none;
   border-color: var(--border-color);
+  background: var(--bg-element) !important;
   transform: none !important;
 }
 

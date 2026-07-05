@@ -4,6 +4,17 @@ Toutes les modifications notables apportées à ce projet seront documentées da
 
 ---
 
+## [1.0.6] - 2026-07-05
+
+### Modifié
+- **Design & Esthétique Premium** :
+  - Ajout d'un effet de lumière radiale (`shine`) violette/rose sur le fond de l'application.
+  - Implémentation d'un style de sélection de liens premium avec un arrière-plan en dégradé subtil et hovers animés.
+  - Coche de checkbox animée lors de la sélection (échelle et opacité).
+  - Intégration d'une barre horizontale blanche pour l'état `indeterminate` (mixed) des checkboxes personnalisées.
+  - Alignement des contours de focus discrets (`focus-visible`) sur tous les contrôles interactifs et les items de lien.
+  - Densité optimisée avec la réduction de marge sous les en-têtes de domaine d'accordéons.
+
 ## [1.0.5] - 2026-07-05
 
 ### Ajouté
