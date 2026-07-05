@@ -4,6 +4,28 @@ Toutes les modifications notables apportées à ce projet seront documentées da
 
 ---
 
+## [1.0.5] - 2026-07-05
+
+### Ajouté
+- **Bandeau de surcharge de liens** : Avertit l'utilisateur si la recherche ou les filtres retournent plus de 200 liens (`warningLimitExceeded`).
+
+### Modifié
+- **Accessibilité (WCAG 2.1 AA) & Sémantique W3C** :
+  - Remplacement de `<h3>` par `<span>` dans les en-têtes d'accordéons `<summary>`.
+  - Intégration d'un `aria-label` descriptif dynamique sur les en-têtes d'accordéons de domaine.
+  - Ajout d'attributs `aria-label` descriptifs sur les checkboxes de domaine.
+  - Synchronisation de l'attribut `aria-checked="mixed"` sur la checkbox globale et les checkboxes de domaine lors des sélections partielles.
+  - Assombrissement de `--text-muted` de `#6c757d` à `#5a6472` en mode clair pour garantir un ratio de contraste de 4.5:1.
+  - Ajout de landmarks (`aria-label`) sur toutes les balises `<section>` de la popup.
+- **Robustesse & Performance** :
+  - Réduction du délai de `revokeObjectURL` à 100ms.
+  - Blocage explicite des protocoles système et pages spéciales (`moz-extension://`, `devtools://`, `blob:`).
+  - Optimisation de la flèche d'accordéon (taille de 11px et transition cubic-bezier).
+  - Application du style glassmorphism sur le Toast.
+
+### Sécurisé
+- **CSV Injection** : Neutralisation de l'exécution automatique de formules tableur en préfixant les cellules commençant par `=`, `+`, `-`, `@` d'un guillemet simple `'` protecteur.
+
 ## [1.0.4] - 2026-07-05
 
 ### Corrigé

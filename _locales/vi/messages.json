@@ -88,5 +88,9 @@
   "clearSearchLabel": {
     "message": "Xóa tìm kiếm",
     "description": "Nhãn có thể truy cập để xóa hộp tìm kiếm"
+  },
+  "warningLimitExceeded": {
+    "message": "Chỉ hiển thị 200 liên kết đầu tiên. Tệp xuất sẽ chứa toàn bộ liên kết.",
+    "description": "Cảnh báo khi số lượng liên kết vượt quá giới hạn hiển thị"
   }
 }

@@ -16,13 +16,13 @@
         </svg>
         <h1>Magic Links</h1>
       </div>
-      <span class="version-tag">v1.0.4</span>
+      <span class="version-tag">v1.0.5</span>
     </header>
 
     <!-- Zone principale -->
     <main class="app-main">
       <!-- Section de contrôle du mode -->
-      <section class="controls-mode">
+      <section class="controls-mode" aria-label="Mode de capture">
         <fieldset style="border: none; margin: 0; padding: 0;">
           <legend class="visually-hidden">Mode de capture des liens</legend>
           <div class="toggle-container">
@@ -38,7 +38,7 @@
       </section>
 
       <!-- Barre de recherche rapide -->
-      <section class="controls-search">
+      <section class="controls-search" aria-label="Recherche rapide">
         <div class="search-wrapper">
           <label for="search-input" class="visually-hidden" data-i18n="searchLabel">Rechercher un lien</label>
           <input type="text" id="search-input" data-i18n="searchPlaceholder" data-i18n-attr="placeholder" placeholder="Rechercher un lien..." autocomplete="off">
@@ -47,7 +47,7 @@
       </section>
 
       <!-- Regroupement par domaine -->
-      <section class="controls-options">
+      <section class="controls-options" aria-label="Options de regroupement">
         <label class="checkbox-container">
           <input type="checkbox" id="group-domain-checkbox">
           <span class="checkmark"></span>
@@ -56,7 +56,7 @@
       </section>
 
       <!-- Compteur dynamique et Sélection globale -->
-      <section class="results-meta">
+      <section class="results-meta" aria-label="Statistiques et sélection">
         <span id="results-counter" class="counter-text" aria-live="polite" aria-atomic="true">...</span>
         <label class="checkbox-container select-all-container" style="margin: 0; display: none;">
           <input type="checkbox" id="select-all-checkbox" checked>
@@ -66,7 +66,15 @@
       </section>
 
       <!-- Liste de prévisualisation des résultats -->
-      <section class="results-preview-container">
+      <section class="results-preview-container" aria-label="Liste des liens détectés">
+        <!-- Bandeau d'avertissement limite de liens (MTF Karukera) -->
+        <div id="warning-banner" class="warning-banner" hidden>
+          <svg class="warning-icon" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" focusable="false">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" fill="currentColor"/>
+          </svg>
+          <span id="warning-banner-text" data-i18n="warningLimitExceeded">Seuls les 200 premiers liens sont affichés. L'exportation contiendra l'intégralité des liens.</span>
+        </div>
+
         <div id="results-list" class="results-list">
           <!-- Chargement initial -->
           <div class="loader-container">
@@ -81,7 +89,7 @@
       </section>
 
       <!-- Actions d'exportation -->
-      <section class="export-actions">
+      <section class="export-actions" aria-label="Actions d'exportation">
         <div class="format-selector-area">
           <label for="export-format" data-i18n="selectFormatLabel">Format :</label>
           <div class="select-wrapper">

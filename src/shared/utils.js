@@ -60,6 +60,13 @@ export function getDomain(url) {
 export function escapeCSV(val) {
   if (val === undefined || val === null) return '';
   let str = String(val);
+  
+  // Protection anti-injection de formules CSV (MTF Karukera)
+  const formulaChars = ['=', '+', '-', '@', '\t', '\r', '\n'];
+  if (formulaChars.some(char => str.startsWith(char))) {
+    str = "'" + str;
+  }
+
   if (str.includes('"') || str.includes(',') || str.includes(';') || str.includes('\n') || str.includes('\r')) {
     str = '"' + str.replace(/"/g, '""') + '"';
   }

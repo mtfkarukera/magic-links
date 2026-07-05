@@ -65,11 +65,12 @@ async function scanActiveTab() {
       return;
     }
 
-    // Protection contre les pages système, fichiers PDF et le Mode Lecture (MTF Karukera)
+    // Protection contre les pages système, protocoles spéciaux, fichiers PDF et le Mode Lecture (MTF Karukera)
     const isWebPage = activeTab.url.startsWith('http://') || activeTab.url.startsWith('https://');
+    const isSpecialProtocol = activeTab.url.startsWith('moz-extension://') || activeTab.url.startsWith('devtools://') || activeTab.url.startsWith('blob:');
     const isPDF = activeTab.url.toLowerCase().endsWith('.pdf') || activeTab.url.includes('pdf.js/web/viewer.html');
     const isReaderMode = activeTab.url.startsWith('about:reader');
-    if (!isWebPage || isPDF || isReaderMode) {
+    if (!isWebPage || isSpecialProtocol || isPDF || isReaderMode) {
       showEmptyState('pageNotSupported', '');
       return;
     }
@@ -152,6 +153,12 @@ function handleModeOrFilterChange() {
   }
 
   filteredLinks = items;
+
+  // Gestion du bandeau d'avertissement limite de liens (MTF Karukera - Sprint B)
+  const warningBanner = document.getElementById('warning-banner');
+  if (warningBanner) {
+    warningBanner.hidden = filteredLinks.length <= 200;
+  }
 
   // 3. Mise à jour du compteur
   updateCounter(filteredLinks.length, mode);
@@ -288,8 +295,17 @@ function renderLinksPreview() {
       groupDiv.className = 'domain-group';
       groupDiv.open = true; // Ouvert par défaut (MTF Karukera)
 
+      const domainLinks = groups[domain];
+
       const groupHeaderWrapper = document.createElement('summary');
       groupHeaderWrapper.className = 'domain-group-header-wrapper';
+      
+      // Accessibilité et état de l'accordéon (MTF Karukera - WCAG AA)
+      groupHeaderWrapper.setAttribute('aria-label', `${domain}, ${domainLinks.length} liens, développé`);
+      groupDiv.addEventListener('toggle', () => {
+        const stateText = groupDiv.open ? 'développé' : 'réduit';
+        groupHeaderWrapper.setAttribute('aria-label', `${domain}, ${domainLinks.length} liens, ${stateText}`);
+      });
 
       const checkboxLabel = document.createElement('label');
       checkboxLabel.className = 'checkbox-container domain-checkbox-container';
@@ -302,12 +318,17 @@ function renderLinksPreview() {
       const checkboxInput = document.createElement('input');
       checkboxInput.type = 'checkbox';
       checkboxInput.className = 'domain-checkbox';
+      checkboxInput.setAttribute('aria-label', `Sélectionner tous les liens de ${domain}`);
 
-      const domainLinks = groups[domain];
       const allChecked = domainLinks.every(link => link.selected);
       const someChecked = domainLinks.some(link => link.selected);
       checkboxInput.checked = allChecked;
       checkboxInput.indeterminate = someChecked && !allChecked;
+      
+      // Indiquer l'état mixte pour les lecteurs d'écran
+      if (checkboxInput.indeterminate) {
+        checkboxInput.setAttribute('aria-checked', 'mixed');
+      }
 
       checkboxInput.addEventListener('change', () => {
         const checked = checkboxInput.checked;
@@ -327,6 +348,8 @@ function renderLinksPreview() {
           }
         });
 
+        checkboxInput.removeAttribute('aria-checked');
+
         syncSelectAllCheckbox();
         updateCounter(filteredLinks.length, document.querySelector('input[name="capture-mode"]:checked').value);
         updateExportButtonsState();
@@ -339,7 +362,7 @@ function renderLinksPreview() {
       checkboxLabel.appendChild(checkmarkSpan);
       groupHeaderWrapper.appendChild(checkboxLabel);
 
-      const groupHeader = document.createElement('h3'); // H3 pour accessibilité (MTF Karukera)
+      const groupHeader = document.createElement('span'); // Span neutre au lieu de H3 pour respect sémantique W3C
       groupHeader.className = 'domain-group-header';
       groupHeader.textContent = `${domain} (${domainLinks.length})`;
       groupHeaderWrapper.appendChild(groupHeader);
@@ -430,7 +453,7 @@ function createLinkItemElement(link) {
       item.setAttribute('aria-checked', 'false');
     }
 
-    // Synchroniser l'en-tête du groupe de domaine si présent
+    // Synchroniser l'en-tête du groupe de domaine si présent (MTF Karukera)
     const domainGroup = item.closest('.domain-group');
     if (domainGroup) {
       const domainCheckbox = domainGroup.querySelector('.domain-checkbox');
@@ -440,6 +463,13 @@ function createLinkItemElement(link) {
       if (domainCheckbox) {
         domainCheckbox.checked = allSiblingsChecked;
         domainCheckbox.indeterminate = someSiblingsChecked && !allSiblingsChecked;
+        
+        // Mettre à jour l'annonce de l'état mixte
+        if (domainCheckbox.indeterminate) {
+          domainCheckbox.setAttribute('aria-checked', 'mixed');
+        } else {
+          domainCheckbox.removeAttribute('aria-checked');
+        }
       }
     }
 
@@ -613,6 +643,13 @@ function syncSelectAllCheckbox() {
   const someChecked = filteredLinks.some(link => link.selected);
   selectAllCheckbox.checked = allChecked;
   selectAllCheckbox.indeterminate = someChecked && !allChecked;
+
+  // Annonce AT de l'état indeterminate (MTF Karukera - WCAG AA)
+  if (selectAllCheckbox.indeterminate) {
+    selectAllCheckbox.setAttribute('aria-checked', 'mixed');
+  } else {
+    selectAllCheckbox.removeAttribute('aria-checked');
+  }
 }
 
 /**
@@ -694,7 +731,7 @@ function handleDownload() {
   document.body.removeChild(downloadLink);
   setTimeout(() => {
     URL.revokeObjectURL(blobUrl);
-  }, 1000);
+  }, 100);
 }
 
 function showToast(message) {

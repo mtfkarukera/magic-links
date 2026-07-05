@@ -88,5 +88,9 @@
   "clearSearchLabel": {
     "message": "Clear search",
     "description": "Accessible label for clearing the search input"
+  },
+  "warningLimitExceeded": {
+    "message": "Only the first 200 links are displayed. The export will contain all links.",
+    "description": "Warning when link count exceeds the display limit"
   }
 }

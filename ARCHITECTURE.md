@@ -35,11 +35,18 @@ graph TD
 
 ### 2.3 Partagé et Utilitaires
 - **`src/shared/utils.js`** : Regroupe les méthodes d'extraction de domaine, les échappements de caractères spécifiques pour le CSV et le Markdown, ainsi que le système d'i18n.
+  - *Sécurité CSV (Anti-Injection)* : La fonction `escapeCSV()` protège contre les vulnérabilités d'injection CSV en insérant automatiquement un guillemet simple `'` devant toute cellule commençant par un caractère de formule sensible (`=`, `+`, `-`, `@`, tabulations, retours chariot).
 - **`_locales/`** : Répertoires de traduction supportant 7 langues (`en`, `fr`, `de`, `es`, `vi`, `ja`, `pt`).
 
 ---
 
 ## 3. Flux de Traitement des Liens
+
+### 3.0 Support des pages et protocoles (Sécurité & Robustesse)
+Afin d'éviter tout plantage de l'extension et les comportements imprévus, l'analyse est strictement restreinte aux pages Web classiques (`http://` et `https://`). La popup bloque l'analyse et affiche un message d'erreur explicite "Cette page n'est pas supportée" pour les pages suivantes :
+- Les documents PDF ou le visualiseur PDF natif (`pdf.js/web/viewer.html`).
+- Le mode lecture (`about:reader`).
+- Les protocoles internes ou système : `moz-extension://`, `devtools://`, `blob:`, `about:`, `file:`.
 
 ### 3.1 Dédoublonnage et Nettoyage
 1. **Filtrage des schémas** : Exclusion immédiate de tout lien n'ayant pas un protocole `http:` ou `https:`.

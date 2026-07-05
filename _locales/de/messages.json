@@ -88,5 +88,9 @@
   "clearSearchLabel": {
     "message": "Suche löschen",
     "description": "Barrierefreies Label zum Löschen des Suchfelds"
+  },
+  "warningLimitExceeded": {
+    "message": "Es werden nur die ersten 200 Links angezeigt. Der Export enthält alle Links.",
+    "description": "Warnung, wenn die Anzahl der Links das Anzeigelimit überschreitet"
   }
 }

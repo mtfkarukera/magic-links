@@ -88,5 +88,9 @@
   "clearSearchLabel": {
     "message": "検索をクリア",
     "description": "検索クリアボタンのアクセシブルなラベル"
+  },
+  "warningLimitExceeded": {
+    "message": "最初の200件のリンクのみが表示されています。エクスポートにはすべてのリンクが含まれます。",
+    "description": "リンク数が表示上限を超えた場合の警告メッセージ"
   }
 }

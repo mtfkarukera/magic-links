@@ -88,5 +88,9 @@
   "clearSearchLabel": {
     "message": "Borrar búsqueda",
     "description": "Etiqueta accesible para borrar la búsqueda"
+  },
+  "warningLimitExceeded": {
+    "message": "Solo se muestran los primeros 200 enlaces. La exportación contendrá todos los enlaces.",
+    "description": "Advertencia cuando el número de enlaces supera el límite de visualización"
   }
 }

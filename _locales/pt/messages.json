@@ -88,5 +88,9 @@
   "clearSearchLabel": {
     "message": "Limpar pesquisa",
     "description": "Rótulo acessível para limpar o campo de pesquisa"
+  },
+  "warningLimitExceeded": {
+    "message": "Apenas os primeiros 200 links são exibidos. A exportação conterá todos os links.",
+    "description": "Aviso quando o número de links excede o limite de exibição"
   }
 }
