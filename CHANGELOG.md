@@ -4,6 +4,14 @@ Toutes les modifications notables apportées à ce projet seront documentées da
 
 ---
 
+## [1.0.7] - 2026-07-05
+
+### Modifié
+- **Build & Packaging** :
+  - Passage au format d'export `.xpi` natif pour Firefox.
+  - Déplacement et centralisation de la destination des livrables compilés dans le dossier `/dist/`.
+  - Version spéciale de pré-validation AMO.
+
 ## [1.0.6] - 2026-07-05
 
 ### Modifié
