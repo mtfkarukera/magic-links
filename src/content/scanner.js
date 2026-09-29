@@ -10,7 +10,8 @@
     const docClone = document.cloneNode(true);
     // Vérification de la présence de la bibliothèque Readability
     if (typeof Readability !== 'undefined') {
-      const reader = new Readability(docClone);
+      // Plafonnement du nombre d'éléments pour la sécurité mémoire (MTF Karukera - Audit v1.0.8)
+      const reader = new Readability(docClone, { maxElemsToParse: 25000 });
       const article = reader.parse();
       if (article && article.content) {
         readabilityActive = true;
@@ -25,9 +26,12 @@
             try {
               // Convertir en URL absolue en utilisant la base d'origine
               const absUrl = new URL(href, document.baseURI).href;
-              // Retirer la partie fragment (#ancre) pour la comparaison
-              const cleanUrl = absUrl.split('#')[0];
-              contentUrls.add(cleanUrl);
+              // Validation stricte du protocole web (MTF Karukera)
+              if (absUrl.startsWith('http://') || absUrl.startsWith('https://')) {
+                // Retirer la partie fragment (#ancre) pour la comparaison
+                const cleanUrl = absUrl.split('#')[0];
+                contentUrls.add(cleanUrl);
+              }
             } catch (err) {
               // URL invalide ignorée
             }
@@ -44,19 +48,20 @@
   const uniqueLinksMap = new Map();
   const currentHost = window.location.hostname;
 
-  // Liste de protocoles à rejeter systématiquement
-  const rejectedProtocols = ['javascript:', 'mailto:', 'tel:', 'data:', 'file:', 'sms:'];
+  // Liste blanche stricte des protocoles web autorisés (MTF Karukera - SEC-01)
+  const ALLOWED_PROTOCOLS = new Set(['http:', 'https:']);
 
   rawLinks.forEach(link => {
     const hrefAttr = link.getAttribute('href');
-    if (!hrefAttr) return;
+    if (!hrefAttr || hrefAttr.startsWith('#')) return;
 
     try {
-      const absUrl = new URL(link.href, document.baseURI).href;
+      // Utilisation stricte de l'attribut href pour parer aux éléments SVG où link.href est un SVGAnimatedString (MTF Karukera - ROB-04)
+      const absUrl = new URL(hrefAttr, document.baseURI).href;
       const parsedUrl = new URL(absUrl);
 
-      // Exclusion des protocoles non-web et des ancres pures
-      if (rejectedProtocols.some(proto => parsedUrl.protocol.toLowerCase().startsWith(proto)) || hrefAttr.startsWith('#')) {
+      // Rejet systématique de tout protocole non web via Allowlist (MTF Karukera)
+      if (!ALLOWED_PROTOCOLS.has(parsedUrl.protocol.toLowerCase())) {
         return;
       }
 
@@ -76,8 +81,8 @@
         }
       }
       
-      // Nettoyer les espaces multiples et retours à la ligne
-      title = title.replace(/\s+/g, ' ').trim();
+      // Nettoyer les espaces multiples, retours à la ligne et plafonner à 500 caractères (MTF Karukera - SEC-03)
+      title = title.replace(/\s+/g, ' ').trim().slice(0, 500);
 
       const isContent = contentUrls.has(cleanUrl);
 

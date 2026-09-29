@@ -32,13 +32,20 @@ let toastEl = document.getElementById('toast');
  * Initialisation au chargement de la popup
  */
 document.addEventListener('DOMContentLoaded', async () => {
-  // 1. Traduction de l'UI
+  // 1. Détection dynamique de la langue et traduction de l'UI (MTF Karukera - WCAG AA)
+  const uiLang = browser.i18n.getUILanguage ? browser.i18n.getUILanguage() : 'fr';
+  document.documentElement.lang = uiLang.split('-')[0];
   applyI18n();
 
   // 2. Écouteurs d'événements
   modeContentRadio.addEventListener('change', handleModeOrFilterChange);
   modeFullRadio.addEventListener('change', handleModeOrFilterChange);
   searchInput.addEventListener('input', handleSearchInput);
+  searchInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      handleClearSearch();
+    }
+  });
   clearSearchBtn.addEventListener('click', handleClearSearch);
   groupDomainCheckbox.addEventListener('change', handleModeOrFilterChange);
   selectAllCheckbox.addEventListener('change', handleSelectAllChange);
@@ -65,37 +72,30 @@ async function scanActiveTab() {
       return;
     }
 
-    // Protection contre les pages système, protocoles spéciaux, fichiers PDF et le Mode Lecture (MTF Karukera)
+    // Protection contre les pages système, protocoles spéciaux, fichiers PDF, Mode Lecture et galeries d'extensions (MTF Karukera - Audit v1.0.8)
     const isWebPage = activeTab.url.startsWith('http://') || activeTab.url.startsWith('https://');
-    const isSpecialProtocol = activeTab.url.startsWith('moz-extension://') || activeTab.url.startsWith('devtools://') || activeTab.url.startsWith('blob:');
+    const isSpecialProtocol = activeTab.url.startsWith('moz-extension://') || activeTab.url.startsWith('devtools://') || activeTab.url.startsWith('blob:') || activeTab.url.startsWith('about:');
     const isPDF = activeTab.url.toLowerCase().endsWith('.pdf') || activeTab.url.includes('pdf.js/web/viewer.html');
     const isReaderMode = activeTab.url.startsWith('about:reader');
-    if (!isWebPage || isSpecialProtocol || isPDF || isReaderMode) {
+
+    let isRestrictedDomain = false;
+    try {
+      const urlObj = new URL(activeTab.url);
+      const RESTRICTED_DOMAINS = ['addons.mozilla.org', 'support.mozilla.org'];
+      isRestrictedDomain = RESTRICTED_DOMAINS.some(d => urlObj.hostname === d || urlObj.hostname.endsWith('.' + d));
+    } catch (e) {
+      // Ignorer l'erreur d'URL
+    }
+
+    if (!isWebPage || isSpecialProtocol || isPDF || isReaderMode || isRestrictedDomain) {
       showEmptyState('pageNotSupported', '');
       return;
     }
 
-    // 1. Injection séquentielle de Readability.js
-    const readabilityResult = await browser.scripting.executeScript({
-      target: { tabId: activeTab.id },
-      files: ['/lib/Readability.js']
-    });
-
-    if (!readabilityResult || !readabilityResult[0]) {
-      throw new Error('Readability.js non injecté correctement.');
-    }
-
-    // Vérification de sécurité anti-race-condition : l'onglet a-t-il navigué entre temps ? (MTF Karukera)
-    const currentTabs = await browser.tabs.query({ active: true, currentWindow: true });
-    const currentTab = currentTabs[0];
-    if (!currentTab || currentTab.id !== activeTab.id || currentTab.url !== activeTab.url) {
-      throw new Error("L'onglet actif a navigué ou a été modifié pendant l'analyse.");
-    }
-
-    // 2. Injection du scanner de liens
+    // Injection atomique et séquentielle des scripts dans l'onglet actif (MTF Karukera - ROB-02)
     const scanResults = await browser.scripting.executeScript({
       target: { tabId: activeTab.id },
-      files: ['/src/content/scanner.js']
+      files: ['/lib/Readability.js', '/src/content/scanner.js']
     });
 
     if (scanResults && scanResults[0] && scanResults[0].result) {
@@ -123,7 +123,16 @@ async function scanActiveTab() {
     }
   } catch (err) {
     console.error('[ML] Erreur lors de l\'analyse de la page :', err.message);
-    showEmptyState('noLinksFound', 'fallbackSuggestion');
+    const isPermissionError = err.message && (
+      err.message.includes('Missing host permission') || 
+      err.message.includes('cannot be scripted') || 
+      err.message.includes('denied')
+    );
+    if (isPermissionError) {
+      showEmptyState('pageNotSupported', '');
+    } else {
+      showEmptyState('noLinksFound', 'fallbackSuggestion');
+    }
   } finally {
     isScanning = false;
   }
@@ -213,7 +222,7 @@ function showLoader() {
   const loader = document.createElement('div');
   loader.className = 'loader';
   loader.setAttribute('role', 'status');
-  loader.setAttribute('aria-label', 'Chargement des liens en cours…');
+  loader.setAttribute('aria-label', t('loadingLinks'));
   container.appendChild(loader);
   resultsList.appendChild(container);
   resultsList.hidden = false;
@@ -256,7 +265,7 @@ function hideEmptyState() {
  */
 function updateCounter(count, mode) {
   const selectedCount = filteredLinks.filter(l => l.selected).length;
-  const renderedText = count > 200 ? ' (affichage des 200 premiers)' : '';
+  const renderedText = count > 200 ? t('warningLimitNotice') : '';
   let baseText = '';
   
   if (mode === 'content') {
@@ -275,19 +284,18 @@ function renderLinksPreview() {
   resultsList.textContent = '';
   const groupDomain = groupDomainCheckbox.checked;
 
-  // Limite d'affichage à 200 éléments max (MTF Karukera)
-  const MAX_RENDERED = 200;
-  const linksToRender = filteredLinks.slice(0, MAX_RENDERED);
-
   if (groupDomain) {
-    // Groupement par domaine
+    // Groupement par domaine sur la TOTALITÉ des liens filtrés (MTF Karukera - ROB-03)
     const groups = {};
-    linksToRender.forEach(link => {
+    filteredLinks.forEach(link => {
       if (!groups[link.domain]) {
         groups[link.domain] = [];
       }
       groups[link.domain].push(link);
     });
+
+    let renderedCardsCount = 0;
+    const MAX_RENDERED = 200;
 
     // Rendu des groupes triés par nom de domaine
     Object.keys(groups).sort().forEach(domain => {
@@ -301,11 +309,7 @@ function renderLinksPreview() {
       groupHeaderWrapper.className = 'domain-group-header-wrapper';
       
       // Accessibilité et état de l'accordéon (MTF Karukera - WCAG AA)
-      groupHeaderWrapper.setAttribute('aria-label', `${domain}, ${domainLinks.length} liens, développé`);
-      groupDiv.addEventListener('toggle', () => {
-        const stateText = groupDiv.open ? 'développé' : 'réduit';
-        groupHeaderWrapper.setAttribute('aria-label', `${domain}, ${domainLinks.length} liens, ${stateText}`);
-      });
+      groupHeaderWrapper.setAttribute('aria-label', `${domain} (${domainLinks.length})`);
 
       const checkboxLabel = document.createElement('label');
       checkboxLabel.className = 'checkbox-container domain-checkbox-container';
@@ -318,7 +322,7 @@ function renderLinksPreview() {
       const checkboxInput = document.createElement('input');
       checkboxInput.type = 'checkbox';
       checkboxInput.className = 'domain-checkbox';
-      checkboxInput.setAttribute('aria-label', `Sélectionner tous les liens de ${domain}`);
+      checkboxInput.setAttribute('aria-label', `${t('checkboxGroupDomain')} : ${domain}`);
 
       const allChecked = domainLinks.every(link => link.selected);
       const someChecked = domainLinks.some(link => link.selected);
@@ -332,20 +336,18 @@ function renderLinksPreview() {
 
       checkboxInput.addEventListener('change', () => {
         const checked = checkboxInput.checked;
-        domainLinks.forEach(link => link.selected = checked);
+        // Sélectionne l'intégralité des liens du domaine dans les données (MTF Karukera)
+        domainLinks.forEach(link => {
+          link.selected = checked;
+        });
         
-        // Mettre à jour visuellement les items sous ce domaine
+        // Mettre à jour visuellement les items rendus sous ce domaine
         const groupItems = groupDiv.querySelectorAll('.link-item');
-        groupItems.forEach((item, index) => {
+        groupItems.forEach(item => {
           const cb = item.querySelector('.link-checkbox');
           if (cb) cb.checked = checked;
-          if (checked) {
-            item.classList.remove('is-unselected');
-            item.setAttribute('aria-checked', 'true');
-          } else {
-            item.classList.add('is-unselected');
-            item.setAttribute('aria-checked', 'false');
-          }
+          item.classList.toggle('is-unselected', !checked);
+          item.setAttribute('aria-checked', String(checked));
         });
 
         checkboxInput.removeAttribute('aria-checked');
@@ -362,7 +364,7 @@ function renderLinksPreview() {
       checkboxLabel.appendChild(checkmarkSpan);
       groupHeaderWrapper.appendChild(checkboxLabel);
 
-      const groupHeader = document.createElement('span'); // Span neutre au lieu de H3 pour respect sémantique W3C
+      const groupHeader = document.createElement('span');
       groupHeader.className = 'domain-group-header';
       groupHeader.textContent = `${domain} (${domainLinks.length})`;
       groupHeaderWrapper.appendChild(groupHeader);
@@ -376,20 +378,25 @@ function renderLinksPreview() {
 
       groupDiv.appendChild(groupHeaderWrapper);
 
-      // Conteneur de liste pour l'accordéondetails (MTF Karukera)
+      // Conteneur de liste pour l'accordéon details (MTF Karukera)
       const linksList = document.createElement('div');
       linksList.className = 'domain-links-list';
 
+      // Afficher les cartes dans la limite de MAX_RENDERED (MTF Karukera)
       domainLinks.forEach(link => {
-        linksList.appendChild(createLinkItemElement(link));
+        if (renderedCardsCount < MAX_RENDERED) {
+          linksList.appendChild(createLinkItemElement(link));
+          renderedCardsCount++;
+        }
       });
 
       groupDiv.appendChild(linksList);
       resultsList.appendChild(groupDiv);
     });
   } else {
-    // Rendu plat direct
-    linksToRender.forEach(link => {
+    // Rendu plat direct (plafonné à 200)
+    const MAX_RENDERED = 200;
+    filteredLinks.slice(0, MAX_RENDERED).forEach(link => {
       resultsList.appendChild(createLinkItemElement(link));
     });
   }
@@ -404,8 +411,7 @@ function createLinkItemElement(link) {
   if (!link.selected) {
     item.classList.add('is-unselected');
   }
-  item.setAttribute('role', 'checkbox');
-  item.setAttribute('aria-checked', link.selected ? 'true' : 'false');
+  item.setAttribute('role', 'listitem');
   item.setAttribute('tabindex', '0');
   item.setAttribute('aria-label', `${link.title} — ${link.url}`);
 
@@ -413,21 +419,6 @@ function createLinkItemElement(link) {
   if (link.score >= 50) {
     item.setAttribute('data-high-score', 'true');
   }
-
-  const openLink = () => {
-    if (link.url.startsWith('http://') || link.url.startsWith('https://')) {
-      browser.tabs.create({ url: link.url });
-    }
-  };
-
-  // Ouvrir le lien au clic ou touches clavier Enter/Space (MTF Karukera)
-  item.addEventListener('click', openLink);
-  item.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      openLink();
-    }
-  });
 
   // Checkbox du lien
   const checkboxLabel = document.createElement('label');
@@ -437,21 +428,14 @@ function createLinkItemElement(link) {
   checkboxInput.type = 'checkbox';
   checkboxInput.className = 'link-checkbox';
   checkboxInput.checked = link.selected;
+  checkboxInput.setAttribute('aria-label', link.title);
 
-  // Intercepte le clic sur le label pour ne pas propager au conteneur parent et ainsi éviter d'ouvrir l'onglet (MTF Karukera)
-  checkboxLabel.addEventListener('click', (e) => {
-    e.stopPropagation();
-  });
-
-  checkboxInput.addEventListener('change', () => {
-    link.selected = checkboxInput.checked;
-    if (link.selected) {
-      item.classList.remove('is-unselected');
-      item.setAttribute('aria-checked', 'true');
-    } else {
-      item.classList.add('is-unselected');
-      item.setAttribute('aria-checked', 'false');
-    }
+  // Bascule la sélection du lien
+  const toggleSelection = () => {
+    link.selected = !link.selected;
+    checkboxInput.checked = link.selected;
+    item.classList.toggle('is-unselected', !link.selected);
+    item.setAttribute('aria-checked', String(link.selected));
 
     // Synchroniser l'en-tête du groupe de domaine si présent (MTF Karukera)
     const domainGroup = item.closest('.domain-group');
@@ -465,6 +449,52 @@ function createLinkItemElement(link) {
         domainCheckbox.indeterminate = someSiblingsChecked && !allSiblingsChecked;
         
         // Mettre à jour l'annonce de l'état mixte
+        if (domainCheckbox.indeterminate) {
+          domainCheckbox.setAttribute('aria-checked', 'mixed');
+        } else {
+          domainCheckbox.removeAttribute('aria-checked');
+        }
+      }
+    }
+
+    syncSelectAllCheckbox();
+    updateCounter(filteredLinks.length, document.querySelector('input[name="capture-mode"]:checked').value);
+    updateExportButtonsState();
+  };
+
+  // Clic sur la carte = sélection / désélection (MTF Karukera - Conflit d'affordance résolu)
+  item.addEventListener('click', (e) => {
+    // Si le clic provient du bouton d'ouverture externe, laisser l'action spécifique s'exécuter
+    if (e.target.closest('.open-external-btn')) return;
+    // Si le clic provient directement de la case/label, l'événement change s'en charge
+    if (e.target.closest('.link-checkbox-container')) return;
+    toggleSelection();
+  });
+
+  // Clavier : touche Espace ou Entrée sur l'item bascule la sélection (Conformité WCAG AA)
+  item.addEventListener('keydown', (e) => {
+    if (e.key === ' ' || e.key === 'Enter') {
+      e.preventDefault();
+      toggleSelection();
+    }
+  });
+
+  checkboxInput.addEventListener('change', () => {
+    link.selected = checkboxInput.checked;
+    item.classList.toggle('is-unselected', !link.selected);
+    item.setAttribute('aria-checked', String(link.selected));
+
+    // Synchroniser l'en-tête du groupe de domaine si présent (MTF Karukera)
+    const domainGroup = item.closest('.domain-group');
+    if (domainGroup) {
+      const domainCheckbox = domainGroup.querySelector('.domain-checkbox');
+      const siblingCheckboxes = Array.from(domainGroup.querySelectorAll('.link-checkbox'));
+      const allSiblingsChecked = siblingCheckboxes.every(cb => cb.checked);
+      const someSiblingsChecked = siblingCheckboxes.some(cb => cb.checked);
+      if (domainCheckbox) {
+        domainCheckbox.checked = allSiblingsChecked;
+        domainCheckbox.indeterminate = someSiblingsChecked && !allSiblingsChecked;
+        
         if (domainCheckbox.indeterminate) {
           domainCheckbox.setAttribute('aria-checked', 'mixed');
         } else {
@@ -499,9 +529,39 @@ function createLinkItemElement(link) {
 
   const score = document.createElement('span');
   score.className = 'link-score';
-  score.textContent = `S: ${link.score}`;
+  score.textContent = `${link.score} pts`;
   header.appendChild(score);
 
+  // Bouton dédié d'ouverture dans un nouvel onglet (Zéro innerHTML, DOM pur - MTF Karukera)
+  const openExternalBtn = document.createElement('button');
+  openExternalBtn.type = 'button';
+  openExternalBtn.className = 'open-external-btn';
+  openExternalBtn.setAttribute('aria-label', `${t('openExternalTab')} : ${link.title}`);
+  openExternalBtn.setAttribute('title', t('openExternalTab'));
+
+  // Construction sécurisée de l'icône SVG externe (zéro innerHTML - Règle globale MTF Karukera)
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(svgNS, 'svg');
+  svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('width', '13');
+  svg.setAttribute('height', '13');
+  svg.setAttribute('aria-hidden', 'true');
+  svg.setAttribute('focusable', 'false');
+
+  const path = document.createElementNS(svgNS, 'path');
+  path.setAttribute('d', 'M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z');
+  path.setAttribute('fill', 'currentColor');
+  svg.appendChild(path);
+  openExternalBtn.appendChild(svg);
+
+  openExternalBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (link.url.startsWith('http://') || link.url.startsWith('https://')) {
+      browser.tabs.create({ url: link.url });
+    }
+  });
+
+  header.appendChild(openExternalBtn);
   contentWrapper.appendChild(header);
 
   const url = document.createElement('span');
@@ -727,11 +787,11 @@ function handleDownload() {
   document.body.appendChild(downloadLink);
   downloadLink.click();
   
-  // Nettoyage du DOM et du Blob (avec délai pour compatibilité - MTF Karukera)
+  // Nettoyage du DOM et du Blob (avec délai allongé pour compatibilité et téléchargements lourds - MTF Karukera)
   document.body.removeChild(downloadLink);
   setTimeout(() => {
     URL.revokeObjectURL(blobUrl);
-  }, 100);
+  }, 3000);
 }
 
 function showToast(message) {
@@ -747,8 +807,8 @@ function showToast(message) {
   void toastEl.offsetWidth; // Reflow forcé
   toastEl.style.animation = '';
 
-  // Masquer après 2 secondes (durée de l'animation)
+  // Masquer après 3.5 secondes pour laisser le temps aux lecteurs d'écran d'annoncer l'état (MTF Karukera - WCAG AA)
   toastTimer = setTimeout(() => {
     toastEl.hidden = true;
-  }, 2000);
+  }, 3500);
 }

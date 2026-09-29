@@ -92,5 +92,17 @@
   "warningLimitExceeded": {
     "message": "Seuls les 200 premiers liens sont affichés. L'exportation contiendra l'intégralité des liens.",
     "description": "Avertissement lorsque le nombre de liens dépasse la limite d'affichage"
+  },
+  "openExternalTab": {
+    "message": "Ouvrir dans un nouvel onglet",
+    "description": "Libellé accessible du bouton pour ouvrir le lien dans un nouvel onglet"
+  },
+  "warningLimitNotice": {
+    "message": " (affichage limité aux 200 premiers)",
+    "description": "Mention de limitation d'affichage dans le compteur de liens"
+  },
+  "loadingLinks": {
+    "message": "Chargement des liens en cours…",
+    "description": "Libellé accessible de l'état de chargement"
   }
 }

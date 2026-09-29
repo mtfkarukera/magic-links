@@ -92,5 +92,17 @@
   "warningLimitExceeded": {
     "message": "Solo se muestran los primeros 200 enlaces. La exportación contendrá todos los enlaces.",
     "description": "Advertencia cuando el número de enlaces supera el límite de visualización"
+  },
+  "openExternalTab": {
+    "message": "Abrir en una nueva pestaña",
+    "description": "Etiqueta accesible del botón para abrir el enlace en una nueva pestaña"
+  },
+  "warningLimitNotice": {
+    "message": " (limitado a los primeros 200)",
+    "description": "Aviso cuando la vista previa está limitada"
+  },
+  "loadingLinks": {
+    "message": "Cargando enlaces…",
+    "description": "Etiqueta accesible para el estado de carga"
   }
 }

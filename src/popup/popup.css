@@ -42,6 +42,8 @@
   --bg-color: #f0f3f8;
   --panel-bg: rgba(255, 255, 255, 0.82);
   --border-color: rgba(0, 0, 0, 0.08);
+  --panel-highlight: inset 0 1px 1px 0 rgba(255, 255, 255, 0.75);
+  --glass-shadow: 0 8px 32px 0 rgba(138, 35, 135, 0.07), 0 2px 8px 0 rgba(0, 0, 0, 0.04);
   
   /* Palette de couleurs Magic (Violet vers Orange) */
   --primary-color: #8A2387;
@@ -55,9 +57,14 @@
   --text-muted: #5a6472;
   
   --status-success: #2ec4b6;
+  --status-success-text: #0d7e74; /* Ratio WCAG AA 4.65:1 (MTF Karukera) */
   --success-bg: rgba(46, 196, 182, 0.1);
   --status-error: #e63946;
   --error-bg: rgba(230, 57, 70, 0.1);
+
+  --status-warning: #9c3f03; /* Ratio WCAG AA 5.2:1 (MTF Karukera) */
+  --warning-bg: rgba(242, 113, 33, 0.12);
+  --warning-border: rgba(242, 113, 33, 0.25);
   
   --bg-element: #ffffff;
   --btn-text: #ffffff;
@@ -84,8 +91,10 @@
     --bg-color: #121214;
     --panel-bg: rgba(30, 30, 34, 0.82);
     --border-color: rgba(255, 255, 255, 0.08);
+    --panel-highlight: inset 0 1px 0 0 rgba(255, 255, 255, 0.15);
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4), 0 2px 8px 0 rgba(0, 0, 0, 0.3);
     
-    --primary-color: #e94057;
+    --primary-color: #ff6b7e; /* Ratio WCAG AA 4.7:1 rehaussé (MTF Karukera) */
     --primary-hover: #f27121;
     --primary-light: rgba(233, 64, 87, 0.15);
     --primary-hover-bg: rgba(233, 64, 87, 0.08);
@@ -94,9 +103,14 @@
     --text-muted: #a0aec0;
     
     --status-success: #4ade80;
+    --status-success-text: #4ade80;
     --success-bg: rgba(74, 222, 128, 0.15);
     --status-error: #f87171;
     --error-bg: rgba(248, 113, 113, 0.15);
+
+    --status-warning: #ff9f59;
+    --warning-bg: rgba(242, 113, 33, 0.18);
+    --warning-border: rgba(242, 113, 33, 0.4);
     
     --bg-element: #1a1a1e;
     --btn-text: #ffffff;
@@ -140,16 +154,35 @@ body {
   border: 0 !important;
 }
 
-/* App container */
+/* Classes utilitaires de structure (MTF Karukera - Audit v1.0.8) */
+.fieldset-reset {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+.select-all-container {
+  margin: 0 !important;
+  display: none;
+}
+
+.select-all-text {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+/* App container avec mesh radial vivant pour révéler le Glassmorphism */
 .app-container {
   display: flex;
   flex-direction: column;
   height: 100%;
   width: 100%;
   overflow: hidden;
-  background: radial-gradient(circle at 50% -20%, rgba(138, 35, 135, 0.04) 0%, transparent 60%),
-              radial-gradient(circle at 50% 120%, rgba(233, 64, 87, 0.02) 0%, transparent 70%),
-              var(--panel-bg);
+  background: radial-gradient(circle at 15% 10%, rgba(138, 35, 135, 0.08) 0%, transparent 50%),
+              radial-gradient(circle at 85% 90%, rgba(242, 113, 33, 0.07) 0%, transparent 55%),
+              radial-gradient(circle at 50% 50%, rgba(233, 64, 87, 0.05) 0%, transparent 60%),
+              var(--bg-color);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   box-sizing: border-box;
@@ -157,13 +190,14 @@ body {
 
 @media (prefers-color-scheme: dark) {
   .app-container {
-    background: radial-gradient(circle at 50% -20%, rgba(233, 64, 87, 0.08) 0%, transparent 60%),
-                radial-gradient(circle at 50% 120%, rgba(242, 113, 33, 0.04) 0%, transparent 70%),
-                var(--panel-bg);
+    background: radial-gradient(circle at 15% 10%, rgba(233, 64, 87, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 85% 90%, rgba(242, 113, 33, 0.08) 0%, transparent 55%),
+                radial-gradient(circle at 50% 50%, rgba(138, 35, 135, 0.08) 0%, transparent 60%),
+                var(--bg-color);
   }
 }
 
-/* Sections Glassmorphism */
+/* Sections Glassmorphism avec biseau spéculaire lumineux (MTF Karukera) */
 .app-header, 
 .controls-mode,
 .controls-search,
@@ -171,13 +205,13 @@ body {
 .results-preview-container,
 .export-actions {
   background: var(--panel-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   padding: var(--space-sm) var(--space-md);
   margin-bottom: 6px;
-  box-shadow: 0 4px 12px var(--shadow-color), 0 1px 2px var(--shadow-dark);
+  box-shadow: var(--panel-highlight), var(--glass-shadow);
   flex-shrink: 0;
 }
 
@@ -339,13 +373,20 @@ body {
 
 .clear-btn {
   position: absolute;
-  right: 8px;
+  right: 6px;
   background: transparent;
   border: none;
   font-size: 18px;
   color: var(--text-muted);
   cursor: pointer;
-  padding: 0 4px;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  min-height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .clear-btn:hover {
@@ -368,6 +409,7 @@ body {
   align-items: center;
   position: relative;
   padding-left: 24px;
+  min-height: 24px; /* Cible tactile minimale WCAG (MTF Karukera - A11Y-03) */
   cursor: pointer;
   font-size: 12px;
   font-weight: 500;
@@ -488,6 +530,21 @@ body {
   padding-right: 4px;
 }
 
+/* Scrollbar personnalisée Chromium / WebKit (MTF Karukera - DES-03) */
+.results-list::-webkit-scrollbar {
+  width: 6px;
+}
+.results-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+.results-list::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 999px;
+}
+.results-list::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
 /* Groupement de domaine */
 .domain-group {
   margin-bottom: var(--space-sm);
@@ -539,28 +596,20 @@ body {
   padding-right: 4px;
 }
 
-/* Bandeau d'avertissement surcharge de liens (MTF Karukera) */
+/* Bandeau d'avertissement surcharge de liens conforme WCAG AA (MTF Karukera - A11Y-02) */
 .warning-banner {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(242, 113, 33, 0.12);
-  border: 1px solid rgba(242, 113, 33, 0.25);
+  background: var(--warning-bg);
+  border: 1px solid var(--warning-border);
   border-radius: var(--radius-sm);
   padding: 8px 10px;
   margin-bottom: var(--space-sm);
-  color: #cf5b13;
+  color: var(--status-warning);
   font-size: 11px;
   font-weight: 600;
   line-height: 1.35;
-}
-
-@media (prefers-color-scheme: dark) {
-  .warning-banner {
-    background: rgba(242, 113, 33, 0.18);
-    border-color: rgba(242, 113, 33, 0.4);
-    color: #ff9f59;
-  }
 }
 
 .warning-icon {
@@ -613,11 +662,11 @@ body {
   border-color: rgba(233, 64, 87, 0.4);
 }
 
-/* Focus visible moderne et accessible (MTF Karukera - Sprint C) */
+/* Focus visible moderne et accessible (MTF Karukera - A11Y-03) */
 .link-item:focus-visible {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 2px var(--primary-light);
+  outline: 2px solid var(--primary-color) !important;
+  outline-offset: -1px;
+  box-shadow: none !important;
 }
 
 .link-item.is-unselected {
@@ -649,8 +698,8 @@ body {
 .link-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  gap: 8px;
+  align-items: center;
+  gap: 6px;
 }
 
 .link-title {
@@ -663,10 +712,11 @@ body {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   word-break: break-word;
+  flex: 1;
 }
 
 .link-score {
-  font-size: 9px;
+  font-size: 9.5px;
   font-weight: 700;
   padding: 2px 4px;
   border-radius: 4px;
@@ -677,11 +727,37 @@ body {
 
 .link-item[data-high-score="true"] .link-score {
   background: var(--success-bg);
-  color: var(--status-success);
+  color: var(--status-success-text); /* Ratio WCAG AA 4.65:1 (MTF Karukera - A11Y-02) */
+}
+
+/* Bouton d'ouverture externe dédié (MTF Karukera - Résolution conflit d'affordance) */
+.open-external-btn {
+  background: transparent;
+  border: none;
+  padding: 4px;
+  border-radius: 4px;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s ease, background 0.15s ease, transform 0.1s ease;
+  flex-shrink: 0;
+}
+
+.open-external-btn:hover {
+  color: var(--primary-color);
+  background: var(--primary-light);
+  transform: translateY(-1px);
+}
+
+.open-external-btn:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 1px;
 }
 
 .link-url {
-  font-size: 9.5px;
+  font-size: 11px; /* Rehaussé de 9.5px à 11px pour le confort de lecture (MTF Karukera - DES-02) */
   color: var(--text-muted);
   word-break: break-all;
   margin-top: 2px;
@@ -888,7 +964,17 @@ body {
     animation: none !important;
     border-top-color: var(--primary-color) !important;
   }
-  .link-item, .action-btn, .toggle-slider {
+  .toast {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: translate(-50%, 0) !important;
+  }
+  .link-item, 
+  .action-btn, 
+  .toggle-slider, 
+  .collapse-arrow, 
+  .checkmark:after, 
+  .open-external-btn {
     transition: none !important;
   }
 }

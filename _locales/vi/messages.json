@@ -92,5 +92,17 @@
   "warningLimitExceeded": {
     "message": "Chỉ hiển thị 200 liên kết đầu tiên. Tệp xuất sẽ chứa toàn bộ liên kết.",
     "description": "Cảnh báo khi số lượng liên kết vượt quá giới hạn hiển thị"
+  },
+  "openExternalTab": {
+    "message": "Mở trong tab mới",
+    "description": "Nhãn có thể truy cập để mở liên kết trong tab mới"
+  },
+  "warningLimitNotice": {
+    "message": " (giới hạn 200 liên kết đầu tiên)",
+    "description": "Thông báo giới hạn số lượng liên kết trong bộ đếm"
+  },
+  "loadingLinks": {
+    "message": "Đang tải liên kết…",
+    "description": "Nhãn có thể truy cập cho trạng thái đang tải"
   }
 }

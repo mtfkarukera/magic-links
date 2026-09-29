@@ -92,5 +92,17 @@
   "warningLimitExceeded": {
     "message": "最初の200件のリンクのみが表示されています。エクスポートにはすべてのリンクが含まれます。",
     "description": "リンク数が表示上限を超えた場合の警告メッセージ"
+  },
+  "openExternalTab": {
+    "message": "新しいタブで開く",
+    "description": "リンクを新しいタブで開くボタンのアクセシブルなラベル"
+  },
+  "warningLimitNotice": {
+    "message": " (最初の200件に制限)",
+    "description": "カウンター内の表示制限通知"
+  },
+  "loadingLinks": {
+    "message": "リンクを読み込み中…",
+    "description": "読み込み状態のアクセシブルなラベル"
   }
 }

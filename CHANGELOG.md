@@ -4,6 +4,35 @@ Toutes les modifications notables apportées à ce projet seront documentées da
 
 ---
 
+## [1.0.8] - 2026-09-29
+
+### Sécurisé
+- **Protection anti-injection CSV** : Neutralisation robuste des formules masquées par des espaces de tête avec `trimStart()` et extension des caractères déclencheurs (`|`, `%`, `\t`).
+- **Allowlist stricte des protocoles** : Remplacement de la liste noire permissive par une liste blanche stricte (`http:`, `https:`), éliminant l'export de schémas non-web (`blob:`, `about:`, schémas applicatifs).
+- **Protection anti-crash SVG** : Utilisation stricte de `link.getAttribute('href')` pour parer aux éléments SVG retournant un `SVGAnimatedString`.
+- **Garde-fous mémoire et DoS** : Plafonnement de la longueur des titres de liens à 500 caractères et limitation de `Readability` à `maxElemsToParse: 25000`.
+
+### Ajouté
+- **Bouton d'ouverture externe dédié** : Intégration d'un bouton `↗` accessible sur chaque ligne avec isolation événementielle (`stopPropagation`), séparant nettement l'action de sélection de la navigation.
+- **Détection dynamique de la locale** : Synchronisation automatique de `document.documentElement.lang` avec la langue de l'interface (`browser.i18n.getUILanguage()`).
+- **Support scrollbar Chromium** : Stylisation personnalisée des pseudo-éléments `::-webkit-scrollbar` pour parité d'affichage entre navigateurs.
+- **Détection préventive des domaines restreints** : Détection des pages système et galeries d'extensions (AMO, etc.) pour afficher immédiatement un état non supporté explicite.
+
+### Corrigé
+- **Accessibilité WCAG 2.1 AA & Affordance** :
+  - Restitution sémantique de la liste de liens en `role="list"` / `role="listitem"`, éliminant le conflit du faux `role="checkbox"`.
+  - Clic sur la carte et touche `Space` / `Enter` dédiés à la sélection / désélection pour l'export.
+  - Rehaussement des contrastes chromatiques : pastille de score élevé (`#0d7e74`, ratio 4.65:1), bandeau d'avertissement (`#9c3f03`, ratio 5.2:1) et tag de version en mode sombre (`#ff6b7e`, ratio 4.7:1).
+  - Cibles tactiles conformes : `#clear-search` et conteneurs de checkboxes portés à au moins 24×24 px.
+  - Nettoyage complet des styles inline dans `popup.html`.
+- **Robustesse & Cycle de Vie** :
+  - **Injection atomique** : Regroupement de l'injection de `Readability.js` et `scanner.js` en un seul appel `browser.scripting.executeScript`, éliminant toute désynchronisation d'onglet.
+  - **Sélection par domaine synchrone** : Calcul du dictionnaire de domaines sur 100% des liens filtrés (au lieu du sous-ensemble tronqué à 200), garantissant une sélection exacte lors de l'export.
+  - **Temporisations fiabilisées** : Délai de `URL.revokeObjectURL` porté à 3 000 ms et persistance du toast portée à 3 500 ms pour l'annonce `aria-live`.
+  - Typographie des URLs rehaussée à 11 px pour le confort visuel.
+
+---
+
 ## [1.0.7] - 2026-07-05
 
 ### Modifié

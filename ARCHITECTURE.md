@@ -12,11 +12,12 @@ L'extension fonctionne de manière entièrement locale, côté client, sans aucu
 graph TD
     A[Utilisateur ouvre la Popup] --> B(popup.js)
     B -->|tabs.query| C[Obtenir l'onglet actif]
-    C -->|scripting.executeScript lib/Readability.js| D[Page Active]
-    C -->|scripting.executeScript src/content/scanner.js| D
+    C -->|scripting.executeScript [Readability.js, scanner.js] atomique| D[Page Active (Monde Isolé)]
     D -->|Scan DOM & Readability| E[Calcul des métadonnées & scores]
     E -->|Retour synchrone executeScript| B
     B -->|Affichage & Filtrage| F[Interface Popup HTML/CSS]
+    F -->|Clic Carte / Espace| H[Bascule Sélection]
+    F -->|Clic Icône ↗| I[Ouverture Nouvel Onglet]
     F -->|Clic Copier / Télécharger| G[Presse-papiers / Fichier Blob]
 ```
 

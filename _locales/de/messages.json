@@ -92,5 +92,17 @@
   "warningLimitExceeded": {
     "message": "Es werden nur die ersten 200 Links angezeigt. Der Export enthält alle Links.",
     "description": "Warnung, wenn die Anzahl der Links das Anzeigelimit überschreitet"
+  },
+  "openExternalTab": {
+    "message": "In neuem Tab öffnen",
+    "description": "Barrierefreies Label zum Öffnen des Links in einem neuen Tab"
+  },
+  "warningLimitNotice": {
+    "message": " (auf die ersten 200 beschränkt)",
+    "description": "Hinweis bei Begrenzung der Linkanzahl"
+  },
+  "loadingLinks": {
+    "message": "Links werden geladen…",
+    "description": "Barrierefreies Label für Ladezustand"
   }
 }

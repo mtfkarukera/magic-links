@@ -1,0 +1,24 @@
+# Fichiers privés et suivi IA (Anti-Leak)
+AGENTS.md
+task.md
+tasks.md
+plan.md
+audit_report.md
+submission_kit.md
+
+# Documentation du dépôt
+README.md
+ARCHITECTURE.md
+CHANGELOG.md
+PRIVACY_POLICY.md
+
+# Médias de publication de store
+publication/
+
+# Build et artefacts
+dist/
+*.xpi
+*.zip
+.web-ext-ignore
+web-ext-config.cjs
+build.sh
